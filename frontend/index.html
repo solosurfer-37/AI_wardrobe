@@ -9,7 +9,7 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
@@ -141,17 +141,11 @@
               <span><i data-lucide="droplets"></i><b id="wx-hum">--</b>%</span>
               <span><i data-lucide="wind"></i><b id="wx-wind">--</b> km/h</span>
             </div>
-            <p class="wx-tip" id="wx-tip">Fetching styling tip...</p>
+            <!-- <p class="wx-tip" id="wx-tip">Fetching styling tip...</p> -->
           </aside>
         </div>
 
-        <!-- Stats Grid (Loading Skeleton) -->
-        <div class="dashboard-stats" id="dashboard-stats-grid">
-          <div class="skeleton skeleton-card"></div>
-          <div class="skeleton skeleton-card"></div>
-          <div class="skeleton skeleton-card"></div>
-          <div class="skeleton skeleton-card"></div>
-        </div>
+        <div class="dashboard-stats" id="dashboard-stats-grid" hidden></div>
 
         <!-- Two-Column Sections -->
         <div class="dashboard-sections">
@@ -169,18 +163,49 @@
             </div>
           </div>
 
-          <!-- Schedule & Smart Context -->
-          <div class="card dashboard-section-card">
-            <div class="section-header">
-              <div>
-                <h3 class="section-title">Today's Schedule & Climate</h3>
-                <p class="section-subtitle">Context-aware styling recommendations</p>
-              </div>
-            </div>
-            <div id="dashboard-context-content">
-              <div class="skeleton" style="height: 180px; border-radius: var(--radius-md);"></div>
-            </div>
-          </div>
+          <div class="card dashboard-section-card story-card">
+  <div class="section-header">
+    <div>
+      <h3 class="section-title">Your Closet, In Numbers</h3>
+      <p class="section-subtitle">The story your wardrobe is telling</p>
+    </div>
+  </div>
+
+  <!-- dashboard.js likhe to yahan likhega, dikhega nahi -->
+  <div id="dashboard-context-content" hidden></div>
+
+  <div class="story-grid">
+    <article class="story" data-tone="sage">
+      <span class="story-eyebrow">Your closet holds</span>
+      <strong class="story-num" id="st-items">--</strong>
+      <p class="story-text" id="st-items-text">pieces, each with a story.</p>
+    </article>
+
+    <article class="story" data-tone="sand">
+      <span class="story-eyebrow">You've invested</span>
+      <strong class="story-num" id="st-value">--</strong>
+      <p class="story-text" id="st-value-text">in how you show up every day.</p>
+    </article>
+
+    <article class="story" data-tone="blush">
+      <span class="story-eyebrow">Every wear costs</span>
+      <strong class="story-num" id="st-cpw">--</strong>
+      <p class="story-text" id="st-cpw-text">and it only gets cheaper when you re-wear.</p>
+    </article>
+
+    <article class="story story-ring" data-tone="sky">
+      <svg viewBox="0 0 64 64" class="ring" aria-hidden="true">
+        <circle cx="32" cy="32" r="26" class="ring-bg"/>
+        <circle cx="32" cy="32" r="26" class="ring-fg" id="st-ring"/>
+      </svg>
+      <div>
+        <span class="story-eyebrow">You actually wear</span>
+        <strong class="story-num" id="st-util">--</strong>
+        <p class="story-text" id="st-util-text">of what you own.</p>
+      </div>
+    </article>
+  </div>
+</div>
         </div>
       </div>
     </div>
@@ -301,6 +326,7 @@
   <script src="js/utils.js"></script>
   <script src="js/toast.js"></script>
   <script src="js/pages/dashboard.js"></script>
+  <script src="js/stories.js"></script>
   <script src="js/weather.js"></script>
   <script src="js/app.js"></script>
 </body>
