@@ -10,15 +10,17 @@ public class OutfitRecommendation {
     private ClothingItem top;
     private ClothingItem bottom;
     private ClothingItem footwear;
+    private ClothingItem outerwear; // Null if warm weather
     private int totalWearCount;
 
     public OutfitRecommendation() {
     }
 
-    public OutfitRecommendation(ClothingItem top, ClothingItem bottom, ClothingItem footwear, int totalWearCount) {
+    public OutfitRecommendation(ClothingItem top, ClothingItem bottom, ClothingItem footwear, ClothingItem outerwear, int totalWearCount) {
         this.top = top;
         this.bottom = bottom;
         this.footwear = footwear;
+        this.outerwear = outerwear;
         this.totalWearCount = totalWearCount;
     }
 
@@ -46,6 +48,14 @@ public class OutfitRecommendation {
 
     public void setFootwear(ClothingItem footwear) {
         this.footwear = footwear;
+    }
+
+    public ClothingItem getOuterwear() {
+        return outerwear;
+    }
+
+    public void setOuterwear(ClothingItem outerwear) {
+        this.outerwear = outerwear;
     }
 
     public int getTotalWearCount() {
