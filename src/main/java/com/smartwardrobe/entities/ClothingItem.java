@@ -1,5 +1,6 @@
 package com.smartwardrobe.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -41,10 +42,12 @@ public class ClothingItem {
     @Column(nullable = false)
     private int wearCount = 0;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "clothingItems", fetch = FetchType.LAZY)
     private List<Outfit> outfits = new ArrayList<>();
 
