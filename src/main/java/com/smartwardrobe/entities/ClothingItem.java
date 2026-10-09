@@ -42,6 +42,8 @@ public class ClothingItem {
     @Column(nullable = false)
     private int wearCount = 0;
 
+    private Double price = 0.0;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -118,6 +120,14 @@ public class ClothingItem {
 
     public void setWearCount(int wearCount) {
         this.wearCount = wearCount;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
     public User getUser() {
