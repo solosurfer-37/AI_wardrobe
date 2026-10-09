@@ -31,71 +31,75 @@
   <!-- Mobile Overlay -->
   <div class="mobile-overlay" id="mobile-overlay"></div>
 
-  <!-- Sidebar Navigation -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <div class="logo">
-        <div class="logo-icon">
-          <i data-lucide="shirt" class="logo-lucide"></i>
-        </div>
-        <div class="logo-text">
-          <h1>AI Wardrobe</h1>
-          <span class="logo-tagline">Smart Styling</span>
-        </div>
+<header class="topbar">
+  <div class="topbar-left">
+    <a href="index.html" class="glass-logo logo">
+      <span class="glass-logo-icon logo-icon">
+        <i data-lucide="shirt" class="logo-lucide"></i>
+      </span>
+      <span class="glass-logo-text logo-text">
+        <h1>AI Wardrobe</h1>
+        <span class="logo-tagline">Smart Styling</span>
+      </span>
+    </a>
+  </div>
+
+  <div class="topbar-actions">
+    <div class="glass-user sidebar-user">
+      <div class="glass-avatar user-avatar">AW</div>
+      <div class="user-info">
+        <span class="user-name">Wardrobe User</span>
+        <span class="user-role">Personal Stylist</span>
       </div>
-      <button class="sidebar-close" id="sidebar-close" aria-label="Close sidebar">
+    </div>
+  </div>
+</header>
+
+<button class="fab-add" id="btn-add-clothing-topbar" aria-label="Add clothing" title="Add clothing">
+  <i data-lucide="plus"></i>
+</button>
+
+<!-- Glass Header -->
+<header class="glass-shell" id="sidebar">
+  <div class="glass-bar">
+
+    <!-- sirf mobile bar me dikhega -->
+    <a href="index.html" class="glass-logo glass-mobile-logo">
+      <span class="glass-logo-icon"><i data-lucide="shirt"></i></span>
+      <span class="glass-logo-text"><h1>AI Wardrobe</h1><span class="logo-tagline">Smart Styling</span></span>
+    </a>
+
+    <nav class="glass-nav sidebar-nav" id="sidebar-nav">
+      <!-- sirf mobile menu ke andar dikhega -->
+      <a href="index.html" class="glass-logo glass-menu-logo">
+        <span class="glass-logo-icon"><i data-lucide="shirt"></i></span>
+        <span class="glass-logo-text"><h1>AI Wardrobe</h1><span class="logo-tagline">Smart Styling</span></span>
+      </a>
+
+      <button class="glass-close sidebar-close" id="sidebar-close" aria-label="Close menu">
         <i data-lucide="x"></i>
       </button>
-    </div>
 
-    <nav class="sidebar-nav" id="sidebar-nav">
-      <a href="index.html" class="nav-item active" data-page="dashboard" id="nav-dashboard">
-        <i data-lucide="layout-dashboard"></i>
-        <span>Dashboard</span>
-      </a>
-      <a href="wardrobe.html" class="nav-item" data-page="wardrobe" id="nav-wardrobe">
-        <i data-lucide="shirt"></i>
-        <span>My Wardrobe</span>
-      </a>
-      <a href="outfits.html" class="nav-item" data-page="outfits" id="nav-outfits">
-        <i data-lucide="sparkles"></i>
-        <span>Outfit Generator</span>
-      </a>
-      <a href="analytics.html" class="nav-item" data-page="analytics" id="nav-analytics">
-        <i data-lucide="bar-chart-3"></i>
-        <span>Analytics</span>
-      </a>
-      <a href="settings.html" class="nav-item" data-page="settings" id="nav-settings">
-        <i data-lucide="settings"></i>
-        <span>Settings</span>
-      </a>
+      <ul class="glass-links">
+        <li><a href="index.html" class="glass-link nav-item active" data-page="dashboard" id="nav-dashboard"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a></li>
+        <li><a href="wardrobe.html" class="glass-link nav-item" data-page="wardrobe" id="nav-wardrobe"><i data-lucide="shirt"></i><span>My Wardrobe</span></a></li>
+        <li><a href="outfits.html" class="glass-link nav-item" data-page="outfits" id="nav-outfits"><i data-lucide="sparkles"></i><span>Outfit Generator</span></a></li>
+        <li><a href="analytics.html" class="glass-link nav-item" data-page="analytics" id="nav-analytics"><i data-lucide="bar-chart-3"></i><span>Analytics</span></a></li>
+        <li><a href="settings.html" class="glass-link nav-item" data-page="settings" id="nav-settings"><i data-lucide="settings"></i><span>Settings</span></a></li>
+      </ul>
     </nav>
 
-    <div class="sidebar-footer">
-      <div class="sidebar-user">
-        <div class="user-avatar">AW</div>
-        <div class="user-info">
-          <span class="user-name">Wardrobe User</span>
-          <span class="user-role">Personal Stylist</span>
-        </div>
-      </div>
-    </div>
-  </aside>
+    <button class="glass-burger" id="sidebar-toggle" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+  </div>
+</header>
+
 
   <!-- Main Content -->
   <main class="main-content" id="main-content">
-    <!-- Top Bar -->
-    <header class="topbar" id="topbar">
-      <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
-        <i data-lucide="menu"></i>
-      </button>
-      <div class="topbar-title" id="topbar-title">Dashboard</div>
-      <div class="topbar-actions">
-        <button class="topbar-btn" id="btn-add-clothing-topbar" title="Add Clothing">
-          <i data-lucide="plus"></i>
-        </button>
-      </div>
-    </header>
+    
 
     <!-- Page Container -->
     <div class="page-container" id="page-container">
@@ -103,7 +107,7 @@
         <!-- Hero Banner -->
         <section class="dashboard-welcome">
           <div class="welcome-content">
-            <span class="welcome-eyebrow">Smart Wardrobe Intelligence</span>
+            <span class="welcome-eyebrow">Smart Wardrobe Aid</span>
             <h1 class="welcome-title">Curated Style, Smarter Rotation</h1>
             <p class="welcome-subtitle">
               Maximize your closet's potential with AI-driven weather styling, rotation tracking, and cost-per-wear analytics.
