@@ -772,3 +772,50 @@ body[data-page="wardrobe"] .topbar { background: transparent; border-bottom: non
   .outfit-weather-bar { gap: 12px 20px; padding: 16px 18px; }
   .outfit-weather-bar > :last-child { margin-left: 0; }
 }
+
+
+/* ── Detail popup: overlap hata ke 10px gap ── */
+.modal-detail .modal-header {
+  padding: 20px 24px 10px;
+  margin-bottom: 0;
+  border-bottom: none;
+  gap: 10px;
+}
+
+.modal-detail .modal-body {
+  padding: 10px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-detail .detail-image-container {
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.modal-detail .detail-field {
+  padding: 10px 0;
+  gap: 10px;
+}
+
+.modal-detail .detail-actions {
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+
+/* ── Popup khule to dock/FAB ke upar aaye aur wo chhup jaaye ── */
+.modal-overlay { z-index: 3000; }
+.toast-container { z-index: 4000; }
+
+body:has(.modal-overlay.active) .glass-shell,
+body:has(.modal-overlay.active) .fab-add {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0.2s;
+}
+
+.modal { max-height: 88vh; }
+
