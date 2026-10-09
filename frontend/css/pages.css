@@ -635,3 +635,29 @@
 .flake{position:absolute;top:-10px;width:6px;height:6px;background:#fff;border-radius:50%;opacity:.8;animation:wxsnow linear infinite}
 
 @media(max-width:1024px){.hero-row{grid-template-columns:1fr}.weather-card{min-height:220px}}
+
+
+
+[hidden]{display:none!important}
+
+.story-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.story{--bg:#eef3ea;--ink:#3f5a3a;--blob:#b9d1b0;position:relative;overflow:hidden;padding:20px 18px 18px;border-radius:22px 22px 22px 6px;background:var(--bg);color:var(--ink);display:flex;flex-direction:column;gap:4px;transition:transform .3s,border-radius .3s}
+.story::before{content:'';position:absolute;right:-34px;top:-34px;width:110px;height:110px;background:var(--blob);opacity:.55;border-radius:58% 42% 63% 37%/45% 55% 45% 55%;transition:transform .6s}
+.story::after{content:'';position:absolute;left:-18px;bottom:-22px;width:64px;height:64px;background:var(--blob);opacity:.3;border-radius:50%}
+.story:hover{transform:translateY(-4px) rotate(-.6deg);border-radius:22px 22px 6px 22px}
+.story:hover::before{transform:rotate(25deg) scale(1.15)}
+.story>*{position:relative;z-index:1}
+.story[data-tone=sand]{--bg:#f7efe1;--ink:#7a5a1f;--blob:#ecd29b}
+.story[data-tone=blush]{--bg:#fbeceb;--ink:#9a4a4a;--blob:#f3c3c0}
+.story[data-tone=sky]{--bg:#e8f0f8;--ink:#35597f;--blob:#b8d1ec}
+.story-eyebrow{font-size:12px;font-style:italic;opacity:.8;letter-spacing:.02em}
+.story-num{font-family:'Playfair Display',serif;font-size:38px;font-weight:600;line-height:1.05;letter-spacing:-.02em}
+.story-text{margin:2px 0 0;font-size:12.5px;line-height:1.45;opacity:.85}
+.story-ring{flex-direction:row;align-items:center;gap:12px}
+.ring{width:64px;height:64px;flex-shrink:0;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:7;stroke-linecap:round}
+.ring-bg{stroke:rgba(255,255,255,.7)}
+.ring-fg{stroke:var(--ink);stroke-dasharray:163.4;stroke-dashoffset:163.4;transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)}
+.story-ring .story-num{font-size:30px}
+
+@media(max-width:480px){.story-grid{grid-template-columns:1fr}}

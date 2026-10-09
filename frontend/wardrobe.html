@@ -9,7 +9,7 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
@@ -31,7 +31,7 @@
   <!-- Mobile Overlay -->
   <div class="mobile-overlay" id="mobile-overlay"></div>
 
-<!-- ═══ Glass Header (bottom dock desktop / top bar mobile) ═══ -->
+<!-- Glass Header (bottom dock on desktop, top bar on mobile) -->
 <header class="glass-shell" id="sidebar">
   <div class="glass-bar">
 
@@ -52,7 +52,7 @@
 
       <ul class="glass-links">
         <li><a href="index.html" class="glass-link nav-item" data-page="dashboard" id="nav-dashboard"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a></li>
-        <li><a href="wardrobe.html" class="glass-link nav-item" data-page="wardrobe" id="nav-wardrobe"><i data-lucide="shirt"></i><span>My Wardrobe</span></a></li>
+        <li><a href="wardrobe.html" class="glass-link nav-item active" data-page="wardrobe" id="nav-wardrobe"><i data-lucide="shirt"></i><span>My Wardrobe</span></a></li>
         <li><a href="outfits.html" class="glass-link nav-item" data-page="outfits" id="nav-outfits"><i data-lucide="sparkles"></i><span>Outfit Generator</span></a></li>
         <li><a href="analytics.html" class="glass-link nav-item" data-page="analytics" id="nav-analytics"><i data-lucide="bar-chart-3"></i><span>Analytics</span></a></li>
         <li><a href="settings.html" class="glass-link nav-item" data-page="settings" id="nav-settings"><i data-lucide="settings"></i><span>Settings</span></a></li>
@@ -66,35 +66,11 @@
   </div>
 </header>
 
-<!-- ═══ Floating Add Button (bottom-left) ═══ -->
+<!-- Floating Add Button (bottom-left) -->
 <button class="fab-add" id="btn-add-clothing-topbar" aria-label="Add clothing" title="Add clothing">
   <i data-lucide="plus"></i>
 </button>
 
-<!-- ═══ Main content ═══ -->
-<main class="main-content">
-  <header class="topbar">
-    <div class="topbar-left">
-      <a href="index.html" class="glass-logo logo">
-        <span class="glass-logo-icon logo-icon"><i data-lucide="shirt" class="logo-lucide"></i></span>
-        <span class="glass-logo-text logo-text"><h1>AI Wardrobe</h1><span class="logo-tagline">Smart Styling</span></span>
-      </a>
-    </div>
-    <div class="topbar-actions">
-      <div class="glass-user sidebar-user">
-        <div class="glass-avatar user-avatar">AW</div>
-        <div class="user-info">
-          <span class="user-name">Wardrobe User</span>
-          <span class="user-role">Personal Stylist</span>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <div class="page-container">
-    <!-- yahan har page ka apna content -->
-  </div>
-</main>
   <!-- Main Content -->
   <main class="main-content" id="main-content">
     <!-- Top Bar -->
@@ -103,25 +79,20 @@
         <i data-lucide="menu"></i>
       </button>
       <div class="topbar-title" id="topbar-title">My Wardrobe</div>
-      <div class="topbar-actions">
-        <button class="topbar-btn" id="btn-add-clothing-topbar" title="Add Clothing">
-          <i data-lucide="plus"></i>
-        </button>
-      </div>
     </header>
 
     <!-- Page Container -->
     <div class="page-container" id="page-container">
       <div class="wardrobe-page animate-fade-in">
-        <!-- Top Toolbar & Controls -->
+        <!-- Toolbar -->
         <div class="wardrobe-toolbar">
           <div class="search-container">
             <i data-lucide="search" class="search-icon"></i>
-            <input 
-              type="text" 
-              id="wardrobe-search-input" 
-              class="search-input" 
-              placeholder="Search by type, color, or pattern..." 
+            <input
+              type="text"
+              id="wardrobe-search-input"
+              class="search-input"
+              placeholder="Search by type, color, or pattern..."
             />
           </div>
 
@@ -130,11 +101,11 @@
             <button class="filter-pill" data-category="tops">Tops</button>
             <button class="filter-pill" data-category="bottoms">Bottoms</button>
             <button class="filter-pill" data-category="outerwear">Outerwear</button>
-            <button class="filter-pill" data-category="footwear">Footwear</button>
+            <!-- <button class="filter-pill" data-category="footwear">Footwear</button> -->
           </div>
 
-          <div style="display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap;">
-            <select id="wardrobe-color-filter" class="select-input" style="height: 40px; padding: 0 var(--space-3); border-radius: var(--radius-md); border: 1px solid var(--border-medium); background: var(--bg-card); font-size: var(--text-sm);">
+          <div class="toolbar-controls">
+            <select id="wardrobe-color-filter" class="select-input">
               <option value="all">All Colors</option>
               <option value="white">White</option>
               <option value="black">Black</option>
@@ -151,7 +122,7 @@
               <option value="purple">Purple</option>
             </select>
 
-            <select id="wardrobe-sort" class="select-input" style="height: 40px; padding: 0 var(--space-3); border-radius: var(--radius-md); border: 1px solid var(--border-medium); background: var(--bg-card); font-size: var(--text-sm);">
+            <select id="wardrobe-sort" class="select-input">
               <option value="least-worn" selected>Least Worn First</option>
               <option value="most-worn">Most Worn First</option>
               <option value="type-asc">Type (A - Z)</option>
@@ -166,7 +137,7 @@
           </div>
         </div>
 
-        <div class="wardrobe-count" id="wardrobe-items-count">Loading items...</div>
+        <div class="wardrobe-count" id="wardrobe-items-count">Opening your closet...</div>
 
         <!-- Clothing Grid -->
         <div class="wardrobe-grid" id="wardrobe-items-grid">
@@ -261,8 +232,8 @@
         </div>
 
         <div class="form-group">
-          <label for="clothing-price">Price ($)</label>
-          <input type="number" id="clothing-price" placeholder="0.00" step="0.01" min="0" />
+          <label for="clothing-price">Price (₹)</label>
+          <input type="number" id="clothing-price" placeholder="0" step="1" min="0" />
         </div>
 
         <div class="form-actions">
