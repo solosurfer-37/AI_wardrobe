@@ -12,7 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Comparator;
 import java.util.List;
 
-/** Orchestrates wardrobe loading, weather lookup and the single recommendation engine. */
+/**
+ * Orchestrates wardrobe loading, weather lookup and the single recommendation
+ * engine.
+ */
 @Service
 public class OutfitRecommendationService {
     private final ClothingItemRepository clothingItemRepository;
@@ -21,9 +24,9 @@ public class OutfitRecommendationService {
     private final OutfitEngine outfitEngine;
 
     public OutfitRecommendationService(ClothingItemRepository clothingItemRepository,
-                                       UserRepository userRepository,
-                                       WeatherService weatherService,
-                                       OutfitEngine outfitEngine) {
+            UserRepository userRepository,
+            WeatherService weatherService,
+            OutfitEngine outfitEngine) {
         this.clothingItemRepository = clothingItemRepository;
         this.userRepository = userRepository;
         this.weatherService = weatherService;

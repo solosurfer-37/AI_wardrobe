@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -122,10 +123,15 @@ public class ImageUploadController {
             return ResponseEntity.ok(updated);
 
         } catch (IllegalStateException e) {
-            // Service role key not configured
+            // Service role key missing / wrong key type / rejected by Supabase Storage
             log.error("Supabase Storage not configured: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
                     .body(Map.of("error", e.getMessage()));
+        } catch (IOException e) {
+            // Supabase Storage answered with an error (bucket missing, bad request, ...)
+            log.error("Supabase Storage error for clothing item id={}: {}", id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                    .body(Map.of("error", "Supabase Storage error: " + e.getMessage()));
         } catch (Exception e) {
             log.error("Failed to upload image for clothing item id={}: {}", id, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -180,6 +186,14 @@ public class ImageUploadController {
             log.info("Extracted image stored in Supabase for clothing item id={}: path={}", id, storedPath);
             return ResponseEntity.ok(updated);
 
+        } catch (IllegalStateException e) {
+            log.error("Supabase Storage not configured: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (IOException e) {
+            log.error("Supabase Storage error for clothing item id={}: {}", id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                    .body(Map.of("error", "Supabase Storage error: " + e.getMessage()));
         } catch (Exception e) {
             log.error("Failed to upload extracted image for clothing item id={}: {}", id, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

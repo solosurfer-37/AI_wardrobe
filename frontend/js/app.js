@@ -152,41 +152,102 @@ const App = {
     const form = document.getElementById('add-clothing-form');
     const submitBtn = document.getElementById('btn-submit-add');
     const addModal = document.getElementById('add-clothing-modal');
+    const fileInput = document.getElementById('clothing-image-file');
+    const previewWrap = document.getElementById('clothing-image-preview-wrap');
+    const preview = document.getElementById('clothing-image-preview');
+    const removeImageBtn = document.getElementById('btn-remove-clothing-image');
+    const uploadArea = document.getElementById('clothing-image-upload-area');
+    const uploadError = document.getElementById('clothing-image-error');
+    const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    let previewUrl = null;
 
     if (!form) return;
 
+    const clearImage = () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      previewUrl = null;
+      if (fileInput) fileInput.value = '';
+      if (preview) preview.removeAttribute('src');
+      if (previewWrap) previewWrap.hidden = true;
+      if (uploadArea) uploadArea.hidden = false;
+      if (uploadError) uploadError.textContent = '';
+    };
+
+    const resetImagePreview = () => {
+      clearImage();
+    };
+
+    if (fileInput && !fileInput._hasHandler) {
+      fileInput._hasHandler = true;
+      fileInput.addEventListener('change', () => {
+        if (uploadError) uploadError.textContent = '';
+        const file = fileInput.files && fileInput.files[0];
+        if (!file) return;
+        const extension = file.name.split('.').pop().toLowerCase();
+        if (!allowedTypes.includes(file.type) && !['jpg', 'jpeg', 'png', 'webp'].includes(extension)) {
+          clearImage();
+          if (uploadError) uploadError.textContent = 'Choose a JPG, JPEG, PNG, or WEBP image.';
+          return;
+        }
+        if (file.size > MAX_IMAGE_SIZE) {
+          clearImage();
+          if (uploadError) uploadError.textContent = 'Image must be 10 MB or smaller.';
+          return;
+        }
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+        previewUrl = URL.createObjectURL(file);
+        if (preview) preview.src = previewUrl;
+        if (previewWrap) previewWrap.hidden = false;
+        if (uploadArea) uploadArea.hidden = true;
+      });
+    }
+
+    if (removeImageBtn && !removeImageBtn._hasHandler) {
+      removeImageBtn._hasHandler = true;
+      removeImageBtn.addEventListener('click', clearImage);
+    }
+    if (uploadArea && fileInput && !uploadArea._hasHandler) {
+      uploadArea._hasHandler = true;
+      uploadArea.addEventListener('click', () => fileInput.click());
+      uploadArea.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          fileInput.click();
+        }
+      });
+    }
+
+    // Reset preview whenever the form is reset, including opening a fresh Add Item modal.
+    form.addEventListener('reset', () => setTimeout(resetImagePreview, 0));
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (submitBtn && submitBtn.disabled) return;
 
       const typeEl = document.getElementById('clothing-type');
       const colorEl = document.getElementById('clothing-color');
       const patternEl = document.getElementById('clothing-pattern');
       const imageEl = document.getElementById('clothing-image');
       const priceEl = document.getElementById('clothing-price');
-
       const type = typeEl ? typeEl.value.trim() : '';
       const color = colorEl ? colorEl.value.trim() : '';
       const pattern = patternEl ? patternEl.value.trim() : '';
       const imageUrl = imageEl ? imageEl.value.trim() : '';
       const price = priceEl && priceEl.value ? parseFloat(priceEl.value) : 0.0;
+      const selectedFile = fileInput && fileInput.files ? fileInput.files[0] : null;
 
-      if (!type) {
-        Toast.error('Validation Error', 'Please select a clothing type.');
-        return;
-      }
-      if (!color) {
-        Toast.error('Validation Error', 'Please select a color.');
+      if (!type) { Toast.error('Validation Error', 'Please select a clothing type.'); return; }
+      if (!color) { Toast.error('Validation Error', 'Please select a color.'); return; }
+      const selectedExtension = selectedFile ? selectedFile.name.split('.').pop().toLowerCase() : '';
+      if (selectedFile && ((!allowedTypes.includes(selectedFile.type) && !['jpg', 'jpeg', 'png', 'webp'].includes(selectedExtension)) || selectedFile.size > MAX_IMAGE_SIZE)) {
+        Toast.error('Invalid Image', 'Choose a JPG, PNG, or WEBP image no larger than 10 MB.');
         return;
       }
 
       const itemData = {
-        type,
-        color,
-        pattern: pattern || 'solid',
-        imageUrl: imageUrl || '',
-        price: price >= 0 ? price : 0.0,
-        wearCount: 0,
-        lastWornDate: null,
+        type, color, pattern: pattern || 'solid', imageUrl: imageUrl || '',
+        price: price >= 0 ? price : 0.0, wearCount: 0, lastWornDate: null,
       };
 
       if (submitBtn) {
@@ -195,22 +256,33 @@ const App = {
         if (window.lucide) lucide.createIcons();
       }
 
+      let createdItem = null;
       try {
-        await API.addClothingItem(itemData);
-        Toast.success('Piece Added', `${Utils.capitalize(color)} ${Utils.capitalize(type)} successfully added to your wardrobe.`);
+        createdItem = await API.addClothingItem(itemData);
+        if (selectedFile) {
+          if (!createdItem || createdItem.id == null) {
+            Toast.error('Item Saved, Image Failed', 'The clothing item was saved, but the backend did not return its ID, so the image could not be uploaded.');
+            form.reset();
+            if (addModal) addModal.classList.remove('active');
+            await thisRefreshCurrentPage();
+            return;
+          }
+          try {
+            await API.uploadClothingImage(createdItem.id, selectedFile);
+          } catch (uploadError) {
+            console.error('Clothing item saved but image upload failed:', uploadError);
+            Toast.error('Item Saved, Image Failed', `The clothing item was saved, but its image could not be uploaded. ${uploadError.message}`);
+            form.reset();
+            if (addModal) addModal.classList.remove('active');
+            await thisRefreshCurrentPage();
+            return;
+          }
+        }
 
+        Toast.success('Piece Added', `${Utils.capitalize(color)} ${Utils.capitalize(type)} successfully added to your wardrobe${selectedFile ? ' with its image' : ''}.`);
         form.reset();
         if (addModal) addModal.classList.remove('active');
-
-        // Refresh data on current active page
-        const currentPage = App.getCurrentPageKey();
-        if (currentPage === 'wardrobe' && window.WardrobePage && typeof WardrobePage.fetchItems === 'function') {
-          WardrobePage.fetchItems();
-        } else if (currentPage === 'dashboard' && window.DashboardPage && typeof DashboardPage.loadDashboardData === 'function') {
-          DashboardPage.loadDashboardData();
-        } else if (currentPage === 'analytics' && window.AnalyticsPage && typeof AnalyticsPage.loadAnalyticsData === 'function') {
-          AnalyticsPage.loadAnalyticsData();
-        }
+        await thisRefreshCurrentPage();
       } catch (err) {
         console.error('Failed to add clothing item:', err);
         Toast.error('Save Failed', err.message || 'Could not save clothing item.');
@@ -222,6 +294,17 @@ const App = {
         }
       }
     });
+
+    async function thisRefreshCurrentPage() {
+      const currentPage = App.getCurrentPageKey();
+      if (currentPage === 'wardrobe' && window.WardrobePage && typeof WardrobePage.fetchItems === 'function') {
+        await WardrobePage.fetchItems();
+      } else if (currentPage === 'dashboard' && window.DashboardPage && typeof DashboardPage.loadDashboardData === 'function') {
+        await DashboardPage.loadDashboardData();
+      } else if (currentPage === 'analytics' && window.AnalyticsPage && typeof AnalyticsPage.loadAnalyticsData === 'function') {
+        await AnalyticsPage.loadAnalyticsData();
+      }
+    }
   },
 
   /**
