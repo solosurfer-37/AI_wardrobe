@@ -33,6 +33,9 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(name = "auth_user_id")
+    private java.util.UUID authUserId;
+
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ClothingItem> clothingItems = new ArrayList<>();
@@ -81,6 +84,14 @@ public class User {
 
     public void setClothingItems(List<ClothingItem> clothingItems) {
         this.clothingItems = clothingItems;
+    }
+
+    public java.util.UUID getAuthUserId() {
+        return authUserId;
+    }
+
+    public void setAuthUserId(java.util.UUID authUserId) {
+        this.authUserId = authUserId;
     }
 
     public List<Outfit> getOutfits() {

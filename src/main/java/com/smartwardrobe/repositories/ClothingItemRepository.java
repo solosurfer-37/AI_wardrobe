@@ -11,6 +11,10 @@ public interface ClothingItemRepository extends JpaRepository<ClothingItem, Long
 
     List<ClothingItem> findByUserId(Long userId);
 
+    java.util.Optional<ClothingItem> findByIdAndUserId(Long id, Long userId);
+
+    void deleteByIdAndUserId(Long id, Long userId);
+
     List<ClothingItem> findByType(String type);
 
     List<ClothingItem> findByColor(String color);

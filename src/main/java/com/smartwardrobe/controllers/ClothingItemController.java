@@ -58,4 +58,33 @@ public class ClothingItemController {
         List<ClothingItem> items = clothingItemService.getLeastWornItems();
         return ResponseEntity.ok(items);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ClothingItem> getClothingItemById(@org.springframework.web.bind.annotation.PathVariable Long id) {
+        ClothingItem item = clothingItemService.getClothingItemById(id);
+        if (item == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(item);
+    }
+
+    @org.springframework.web.bind.annotation.PutMapping("/{id}")
+    public ResponseEntity<ClothingItem> updateClothingItem(
+            @org.springframework.web.bind.annotation.PathVariable Long id,
+            @RequestBody ClothingItem clothingItem) {
+        ClothingItem updated = clothingItemService.updateClothingItem(id, clothingItem);
+        if (updated == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updated);
+    }
+
+    @org.springframework.web.bind.annotation.DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteClothingItem(@org.springframework.web.bind.annotation.PathVariable Long id) {
+        boolean deleted = clothingItemService.deleteClothingItem(id);
+        if (!deleted) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.noContent().build();
+    }
 }
