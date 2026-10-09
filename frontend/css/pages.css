@@ -601,3 +601,37 @@
   background: var(--color-amber-light);
   color: var(--color-amber);
 }
+
+
+
+
+.hero-row{display:grid;grid-template-columns:1fr 340px;gap:var(--space-6);align-items:stretch;margin-bottom:var(--space-6)}
+.hero-row .dashboard-welcome{margin-bottom:0}
+
+.weather-card{position:relative;overflow:hidden;border-radius:var(--radius-lg,16px);padding:22px;color:#fff;display:flex;flex-direction:column;justify-content:space-between;gap:14px;min-height:260px;background:linear-gradient(160deg,#4facfe,#2b6cb0);box-shadow:0 10px 30px rgba(0,0,0,.18);transition:background .6s}
+.weather-card[data-cond=clear]{background:linear-gradient(160deg,#fbbf24,#f97316)}
+.weather-card[data-cond=cloud]{background:linear-gradient(160deg,#94a3b8,#475569)}
+.weather-card[data-cond=rain]{background:linear-gradient(160deg,#3b5a7a,#1e293b)}
+.weather-card[data-cond=storm]{background:linear-gradient(160deg,#4b3b6b,#0f172a)}
+.weather-card[data-cond=snow]{background:linear-gradient(160deg,#a5c9e8,#5b7fa6)}
+.weather-card>*{position:relative;z-index:2}
+.wx-fx{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+
+.wx-top{display:flex;justify-content:space-between;font-size:13px;font-weight:500;opacity:.95}
+.wx-loc{display:flex;align-items:center;gap:6px}
+.wx-loc svg,.wx-meta svg{width:14px;height:14px}
+.wx-main{display:flex;align-items:center;gap:16px}
+.wx-icon{width:64px;height:64px;stroke-width:1.5;animation:wxfloat 4s ease-in-out infinite}
+.wx-temp{font-size:64px;font-weight:700;line-height:1;font-family:'Playfair Display',serif}
+.wx-temp sup{font-size:22px;font-weight:500;margin-left:2px}
+.wx-meta{display:flex;justify-content:space-between;font-size:12px;background:rgba(255,255,255,.16);backdrop-filter:blur(8px);border-radius:10px;padding:10px 12px}
+.wx-meta span{display:flex;align-items:center;gap:5px}
+.wx-tip{margin:0;font-size:13px;line-height:1.4;opacity:.95}
+
+@keyframes wxfloat{50%{transform:translateY(-6px)}}
+@keyframes wxfall{to{transform:translateY(300px)}}
+@keyframes wxsnow{to{transform:translate(20px,300px)}}
+.drop{position:absolute;top:-20px;width:2px;height:16px;background:rgba(255,255,255,.55);border-radius:2px;animation:wxfall linear infinite}
+.flake{position:absolute;top:-10px;width:6px;height:6px;background:#fff;border-radius:50%;opacity:.8;animation:wxsnow linear infinite}
+
+@media(max-width:1024px){.hero-row{grid-template-columns:1fr}.weather-card{min-height:220px}}

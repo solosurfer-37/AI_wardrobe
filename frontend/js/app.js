@@ -38,7 +38,7 @@ const App = {
   },
 
   /**
-   * Ensure the active navigation item in the sidebar is highlighted
+   * Ensure the active navigation item in the header is highlighted
    */
   highlightActiveNav() {
     const currentPage = this.getCurrentPageKey();
@@ -54,42 +54,42 @@ const App = {
   },
 
   /**
-   * Mobile Sidebar navigation controls
+   * Glass header: scroll state + mobile full-screen menu
    */
   initSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const menuToggle = document.getElementById('menu-toggle');
-    const sidebarClose = document.getElementById('sidebar-close');
-    const mobileOverlay = document.getElementById('mobile-overlay');
+    const shell  = document.getElementById('sidebar');
+    const toggle = document.getElementById('sidebar-toggle');
+    const close  = document.getElementById('sidebar-close');
+    if (!shell || !toggle) return;
 
-    if (menuToggle && sidebar) {
-      menuToggle.addEventListener('click', () => {
-        sidebar.classList.add('active');
-        sidebar.classList.add('open');
-        if (mobileOverlay) mobileOverlay.classList.add('active');
-      });
-    }
+    const mq = window.matchMedia('(max-width: 980px)');
 
-    const closeSidebar = () => {
-      if (sidebar) {
-        sidebar.classList.remove('active');
-        sidebar.classList.remove('open');
-      }
-      if (mobileOverlay) mobileOverlay.classList.remove('active');
+    const setMenu = (open) => {
+      shell.classList.toggle('open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+      document.body.style.overflow = open ? 'hidden' : '';
     };
 
-    if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
-    if (mobileOverlay) mobileOverlay.addEventListener('click', closeSidebar);
+    // Scroll state
+    const onScroll = () => shell.classList.toggle('is-scrolled', window.scrollY > 16);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
 
-    // Close mobile sidebar when clicking any navigation link
-    const navLinks = document.querySelectorAll('#sidebar-nav .nav-item');
-    navLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        if (window.innerWidth <= 768) {
-          closeSidebar();
-        }
-      });
+    toggle.addEventListener('click', () => setMenu(!shell.classList.contains('open')));
+    if (close) close.addEventListener('click', () => setMenu(false));
+
+    // Link click pe menu band
+    document.querySelectorAll('#sidebar-nav .nav-item').forEach(link =>
+      link.addEventListener('click', () => setMenu(false))
+    );
+
+    // Esc
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && shell.classList.contains('open')) setMenu(false);
     });
+
+    // Desktop pe resize ho to reset
+    mq.addEventListener('change', (e) => { if (!e.matches) setMenu(false); });
   },
 
   /**

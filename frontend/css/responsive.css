@@ -15,30 +15,18 @@
   .outfit-skeleton-grid { grid-template-columns: 1fr 1fr; }
 }
 
+
+
+@media (max-width: 980px) {
+  .main-content { padding-top: 84px; padding-bottom: 24px; }
+  .page-container { padding: var(--space-5) var(--space-4); }
+}
+
+
 /* ── Mobile landscape & small tablets (≤768px) ── */
 @media (max-width: 768px) {
   /* Sidebar collapses */
-  .sidebar {
-    transform: translateX(-100%);
-  }
-
-  .sidebar.open,
-  .sidebar.active {
-    transform: translateX(0);
-  }
-
-  .sidebar-close {
-    display: flex;
-  }
-
-  .main-content {
-    margin-left: 0;
-  }
-
-  .menu-toggle {
-    display: flex;
-  }
-
+  
   .topbar {
     padding: 0 var(--space-4);
   }
@@ -137,3 +125,5 @@
     font-size: var(--text-xl);
   }
 }
+
+
