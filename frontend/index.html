@@ -104,26 +104,46 @@
     <!-- Page Container -->
     <div class="page-container" id="page-container">
       <div class="dashboard-page animate-fade-in">
-        <!-- Hero Banner -->
-        <section class="dashboard-welcome">
-          <div class="welcome-content">
-            <span class="welcome-eyebrow">Smart Wardrobe Aid</span>
-            <h1 class="welcome-title">Curated Style, Smarter Rotation</h1>
-            <p class="welcome-subtitle">
-              Maximize your closet's potential with AI-driven weather styling, rotation tracking, and cost-per-wear analytics.
-            </p>
-            <div class="welcome-actions">
-              <a href="outfits.html" class="btn btn-generate">
-                <i data-lucide="sparkles"></i>
-                Generate Today's Outfit
-              </a>
-              <a href="wardrobe.html" class="btn btn-wardrobe-link">
-                <i data-lucide="shirt"></i>
-                View Wardrobe
-              </a>
+        <!-- Hero Banner + Weather -->
+        <div class="hero-row">
+          <section class="dashboard-welcome">
+            <div class="welcome-content">
+              <span class="welcome-eyebrow">Smart Wardrobe Aid</span>
+              <h1 class="welcome-title">Curated Style, Smarter Rotation</h1>
+              <p class="welcome-subtitle">
+                Maximize your closet's potential with AI-driven weather styling, rotation tracking, and cost-per-wear analytics.
+              </p>
+              <div class="welcome-actions">
+                <a href="outfits.html" class="btn btn-generate">
+                  <i data-lucide="sparkles"></i>
+                  Generate Today's Outfit
+                </a>
+                <a href="wardrobe.html" class="btn btn-wardrobe-link">
+                  <i data-lucide="shirt"></i>
+                  View Wardrobe
+                </a>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+
+          <aside class="weather-card" id="weather-card" data-cond="clear">
+            <div class="wx-fx" id="wx-fx"></div>
+            <div class="wx-top">
+              <span class="wx-loc" id="wx-loc"><i data-lucide="map-pin"></i> Locating...</span>
+              <span class="wx-desc" id="wx-desc">--</span>
+            </div>
+            <div class="wx-main">
+              <i data-lucide="cloud" class="wx-icon" id="wx-icon"></i>
+              <div class="wx-temp"><span id="wx-temp">--</span><sup>°C</sup></div>
+            </div>
+            <div class="wx-meta">
+              <span><i data-lucide="thermometer"></i><b id="wx-feels">--</b> feels</span>
+              <span><i data-lucide="droplets"></i><b id="wx-hum">--</b>%</span>
+              <span><i data-lucide="wind"></i><b id="wx-wind">--</b> km/h</span>
+            </div>
+            <p class="wx-tip" id="wx-tip">Fetching styling tip...</p>
+          </aside>
+        </div>
 
         <!-- Stats Grid (Loading Skeleton) -->
         <div class="dashboard-stats" id="dashboard-stats-grid">
@@ -281,6 +301,7 @@
   <script src="js/utils.js"></script>
   <script src="js/toast.js"></script>
   <script src="js/pages/dashboard.js"></script>
+  <script src="js/weather.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
