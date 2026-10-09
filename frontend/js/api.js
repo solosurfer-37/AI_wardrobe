@@ -221,10 +221,11 @@ const API = {
    * @param {number} longitude
    */
   async getOutfitRecommendations(latitude, longitude) {
-    const lat = latitude || CONFIG.DEFAULT_LATITUDE;
-    const lon = longitude || CONFIG.DEFAULT_LONGITUDE;
+    const lat = Number.isFinite(Number(latitude)) ? Number(latitude) : CONFIG.DEFAULT_LATITUDE;
+    const lon = Number.isFinite(Number(longitude)) ? Number(longitude) : CONFIG.DEFAULT_LONGITUDE;
+    const params = new URLSearchParams({ latitude: String(lat), longitude: String(lon) });
     try {
-      return await this.request(`/api/outfits/recommend?latitude=${lat}&longitude=${lon}`);
+      return await this.request(`/api/outfits/recommend?${params.toString()}`);
     } catch (err) {
       if (err.isNetworkError) {
         return LocalStore.getRecommendations();

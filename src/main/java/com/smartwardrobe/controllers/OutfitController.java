@@ -13,7 +13,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/outfits")
 public class OutfitController {
-
     private final OutfitRecommendationService outfitRecommendationService;
 
     public OutfitController(OutfitRecommendationService outfitRecommendationService) {
@@ -21,16 +20,14 @@ public class OutfitController {
     }
 
     /**
-     * GET /api/outfits/recommend?latitude={lat}&longitude={lon}
-     * Returns up to 3 AI-recommended outfit combinations.
-     * Integrates weather data to add outerwear if temperature < 15°C.
+     * GET /api/outfits/recommend?latitude={lat}&longitude={lon}[&event=college]
+     * Returns up to three ranked outfits while preserving the existing response contract.
      */
     @GetMapping("/recommend")
     public ResponseEntity<List<OutfitRecommendation>> getRecommendations(
             @RequestParam(defaultValue = "28.6139") double latitude,
-            @RequestParam(defaultValue = "77.2090") double longitude) {
-        
-        List<OutfitRecommendation> recommendations = outfitRecommendationService.recommendOutfits(latitude, longitude);
-        return ResponseEntity.ok(recommendations);
+            @RequestParam(defaultValue = "77.2090") double longitude,
+            @RequestParam(required = false) String event) {
+        return ResponseEntity.ok(outfitRecommendationService.recommendOutfits(latitude, longitude, event));
     }
 }

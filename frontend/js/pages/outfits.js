@@ -268,8 +268,11 @@ const OutfitsPage = {
           <span class="outfit-card-number">Look #${index + 1}</span>
           <span class="badge badge-neutral">
             <i data-lucide="rotate-ccw" style="width: 12px; height: 12px; margin-right: 4px;"></i>
-            ${outfit.totalWearCount} total wears
+            ${Number.isFinite(Number(outfit.totalWearCount)) ? Number(outfit.totalWearCount) : 0} total wears
           </span>
+          ${Number.isFinite(Number(outfit.score)) && outfit.score !== null
+            ? `<span class="badge badge-neutral">${Number(outfit.score).toFixed(1)} match score</span>`
+            : ''}
         </div>
 
         <div class="outfit-items-grid">
@@ -290,6 +293,7 @@ const OutfitsPage = {
             Color Balanced
           </span>
         </div>
+        ${outfit.reason ? `<p class="section-subtitle" style="margin-top: var(--space-3);">${Utils.escapeHTML(outfit.reason)}</p>` : ''}
       </div>
     `;
   },
