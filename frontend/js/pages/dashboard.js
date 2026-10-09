@@ -260,3 +260,4 @@ const DashboardPage = {
     if (window.lucide) lucide.createIcons();
   },
 };
+window.DashboardPage = DashboardPage;

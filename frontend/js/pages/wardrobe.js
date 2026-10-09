@@ -241,3 +241,4 @@ const WardrobePage = {
     if (window.lucide) lucide.createIcons();
   },
 };
+window.WardrobePage = WardrobePage;

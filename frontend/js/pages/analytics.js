@@ -284,3 +284,4 @@ const AnalyticsPage = {
     if (window.lucide) lucide.createIcons();
   },
 };
+window.AnalyticsPage = AnalyticsPage;

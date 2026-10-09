@@ -316,3 +316,5 @@ const OutfitsPage = {
     `;
   },
 };
+
+window.OutfitsPage = OutfitsPage;
