@@ -44,6 +44,24 @@ public class ClothingItem {
 
     private Double price = 0.0;
 
+    private String name;
+
+    private String category;
+
+    private String brand;
+
+    private String season;
+
+    private String occasion;
+
+    private Double rating = 0.0;
+
+    private String imagePath;
+
+    private String originalImagePath;
+
+    private String extractedImagePath;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -136,6 +154,78 @@ public class ClothingItem {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public String getSeason() {
+        return season;
+    }
+
+    public void setSeason(String season) {
+        this.season = season;
+    }
+
+    public String getOccasion() {
+        return occasion;
+    }
+
+    public void setOccasion(String occasion) {
+        this.occasion = occasion;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    public String getOriginalImagePath() {
+        return originalImagePath;
+    }
+
+    public void setOriginalImagePath(String originalImagePath) {
+        this.originalImagePath = originalImagePath;
+    }
+
+    public String getExtractedImagePath() {
+        return extractedImagePath;
+    }
+
+    public void setExtractedImagePath(String extractedImagePath) {
+        this.extractedImagePath = extractedImagePath;
     }
 
     public List<Outfit> getOutfits() {

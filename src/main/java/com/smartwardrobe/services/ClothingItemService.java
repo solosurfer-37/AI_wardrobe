@@ -42,6 +42,65 @@ public class ClothingItemService {
     }
 
     @Transactional(readOnly = true)
+    public ClothingItem getClothingItemById(Long id) {
+        User owner = getDemoOwner();
+        if (owner == null) return null;
+        return clothingItemRepository.findByIdAndUserId(id, owner.getId()).orElse(null);
+    }
+
+    /**
+     * Returns the database user ID for a given clothing item.
+     * Called inside a transaction so the lazy User association is safe to access.
+     */
+    @Transactional(readOnly = true)
+    public Long getOwnerIdForItem(Long itemId) {
+        User owner = getDemoOwner();
+        if (owner == null) return null;
+        boolean exists = clothingItemRepository.findByIdAndUserId(itemId, owner.getId()).isPresent();
+        return exists ? owner.getId() : null;
+    }
+
+    @Transactional
+    public ClothingItem updateClothingItem(Long id, ClothingItem updatedItem) {
+        User owner = getDemoOwner();
+        if (owner == null) return null;
+
+        ClothingItem existing = clothingItemRepository.findByIdAndUserId(id, owner.getId()).orElse(null);
+        if (existing == null) return null;
+
+        if (updatedItem.getType() != null) existing.setType(updatedItem.getType());
+        if (updatedItem.getColor() != null) existing.setColor(updatedItem.getColor());
+        if (updatedItem.getPattern() != null) existing.setPattern(updatedItem.getPattern());
+        if (updatedItem.getImageUrl() != null) existing.setImageUrl(updatedItem.getImageUrl());
+        if (updatedItem.getLastWornDate() != null) existing.setLastWornDate(updatedItem.getLastWornDate());
+        if (updatedItem.getPrice() != null) existing.setPrice(updatedItem.getPrice());
+        if (updatedItem.getName() != null) existing.setName(updatedItem.getName());
+        if (updatedItem.getCategory() != null) existing.setCategory(updatedItem.getCategory());
+        if (updatedItem.getBrand() != null) existing.setBrand(updatedItem.getBrand());
+        if (updatedItem.getSeason() != null) existing.setSeason(updatedItem.getSeason());
+        if (updatedItem.getOccasion() != null) existing.setOccasion(updatedItem.getOccasion());
+        if (updatedItem.getRating() != null) existing.setRating(updatedItem.getRating());
+        if (updatedItem.getImagePath() != null) existing.setImagePath(updatedItem.getImagePath());
+        if (updatedItem.getOriginalImagePath() != null) existing.setOriginalImagePath(updatedItem.getOriginalImagePath());
+        if (updatedItem.getExtractedImagePath() != null) existing.setExtractedImagePath(updatedItem.getExtractedImagePath());
+        existing.setWearCount(updatedItem.getWearCount());
+
+        return clothingItemRepository.save(existing);
+    }
+
+    @Transactional
+    public boolean deleteClothingItem(Long id) {
+        User owner = getDemoOwner();
+        if (owner == null) return false;
+
+        if (clothingItemRepository.findByIdAndUserId(id, owner.getId()).isPresent()) {
+            clothingItemRepository.deleteByIdAndUserId(id, owner.getId());
+            return true;
+        }
+        return false;
+    }
+
+    @Transactional(readOnly = true)
     public List<ClothingItem> getLeastWornItems() {
         return getAllClothingItems().stream()
                 .sorted(Comparator.comparingInt(ClothingItem::getWearCount))

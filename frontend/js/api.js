@@ -199,6 +199,47 @@ const API = {
   },
 
   /**
+   * PUT /api/clothes/:id — Update a clothing item
+   */
+  async updateClothingItem(id, clothingItem) {
+    try {
+      return await this.request(`/api/clothes/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(clothingItem),
+      });
+    } catch (err) {
+      if (err.isNetworkError) {
+        const items = LocalStore.getItems();
+        const idx = items.findIndex(i => String(i.id) === String(id));
+        if (idx !== -1) {
+          items[idx] = { ...items[idx], ...clothingItem };
+          LocalStore.saveItems(items);
+          return items[idx];
+        }
+      }
+      throw err;
+    }
+  },
+
+  /**
+   * DELETE /api/clothes/:id — Delete a clothing item
+   */
+  async deleteClothingItem(id) {
+    try {
+      return await this.request(`/api/clothes/${id}`, {
+        method: 'DELETE',
+      });
+    } catch (err) {
+      if (err.isNetworkError) {
+        const items = LocalStore.getItems().filter(i => String(i.id) !== String(id));
+        LocalStore.saveItems(items);
+        return true;
+      }
+      throw err;
+    }
+  },
+
+  /**
    * GET /api/clothes/least-worn — Retrieve items sorted by wearCount ascending
    */
   async getLeastWornItems() {
