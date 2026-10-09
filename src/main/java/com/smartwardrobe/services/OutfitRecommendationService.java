@@ -20,35 +20,30 @@ public class OutfitRecommendationService {
     // ── Category definitions ──
 
     private static final Set<String> REGULAR_TOP_TYPES = Set.of(
-        "shirt", "t-shirt", "blouse", "top"
-    );
+            "shirt", "t-shirt", "blouse", "top");
 
     private static final Set<String> OUTERWEAR_TYPES = Set.of(
-        "jacket", "sweater", "hoodie"
-    );
+            "jacket", "sweater", "hoodie");
 
     private static final Set<String> BOTTOM_TYPES = Set.of(
-        "pants", "jeans", "shorts", "skirt", "trousers"
-    );
+            "pants", "jeans", "shorts", "skirt", "trousers");
 
     private static final Set<String> FOOTWEAR_TYPES = Set.of(
-        "shoes", "sneakers", "boots", "sandals", "loafers"
-    );
+            "shoes", "sneakers", "boots", "sandals", "loafers");
 
     // ── Color Compatibility Graph (symmetric clash pairs) ──
 
     private static final Set<Set<String>> CLASHING_PAIRS = Set.of(
-        Set.of("red", "green"),
-        Set.of("red", "orange"),
-        Set.of("red", "pink"),
-        Set.of("orange", "pink"),
-        Set.of("brown", "black"),
-        Set.of("navy", "black"),
-        Set.of("green", "orange"),
-        Set.of("purple", "red"),
-        Set.of("yellow", "green"),
-        Set.of("brown", "gray")
-    );
+            Set.of("red", "green"),
+            Set.of("red", "orange"),
+            Set.of("red", "pink"),
+            Set.of("orange", "pink"),
+            Set.of("brown", "black"),
+            Set.of("navy", "black"),
+            Set.of("green", "orange"),
+            Set.of("purple", "red"),
+            Set.of("yellow", "green"),
+            Set.of("brown", "gray"));
 
     private static final int RECENCY_DAYS = 2;
     private static final int MAX_RECOMMENDATIONS = 3;
@@ -63,7 +58,8 @@ public class OutfitRecommendationService {
     }
 
     /**
-     * Generates context-aware outfit recommendations based on weather and wear history.
+     * Generates context-aware outfit recommendations based on weather and wear
+     * history.
      */
     public List<OutfitRecommendation> recommendOutfits(double latitude, double longitude) {
         List<ClothingItem> allItems = clothingItemRepository.findAll();
@@ -87,14 +83,14 @@ public class OutfitRecommendationService {
         if (isCold) {
             // Cold weather: Need Outerwear (4-way combinations)
             List<ClothingItem> outerwears = filterAndCategorize(allItems, OUTERWEAR_TYPES, cutoffDate);
-            
+
             for (ClothingItem top : tops) {
                 for (ClothingItem bottom : bottoms) {
                     for (ClothingItem shoe : footwear) {
                         for (ClothingItem outerwear : outerwears) {
                             if (isCompatibleCombo(top, bottom, shoe, outerwear)) {
-                                int score = top.getWearCount() + bottom.getWearCount() + 
-                                            shoe.getWearCount() + outerwear.getWearCount();
+                                int score = top.getWearCount() + bottom.getWearCount() +
+                                        shoe.getWearCount() + outerwear.getWearCount();
                                 candidates.add(new OutfitRecommendation(top, bottom, shoe, outerwear, score));
                             }
                         }
@@ -126,8 +122,8 @@ public class OutfitRecommendationService {
     // ───────────────────────── Private helpers ─────────────────────────
 
     private List<ClothingItem> filterAndCategorize(List<ClothingItem> items,
-                                                   Set<String> acceptedTypes,
-                                                   LocalDate cutoffDate) {
+            Set<String> acceptedTypes,
+            LocalDate cutoffDate) {
         return items.stream()
                 .filter(item -> acceptedTypes.contains(item.getType().toLowerCase().trim()))
                 .filter(item -> item.getLastWornDate() == null || item.getLastWornDate().isBefore(cutoffDate))
@@ -139,10 +135,11 @@ public class OutfitRecommendationService {
      * Validates color compatibility. If outerwear is provided, checks all 6 edges.
      * Otherwise, checks the 3 edges of the base outfit.
      */
-    private boolean isCompatibleCombo(ClothingItem top, ClothingItem bottom, ClothingItem footwear, ClothingItem outerwear) {
+    private boolean isCompatibleCombo(ClothingItem top, ClothingItem bottom, ClothingItem footwear,
+            ClothingItem outerwear) {
         boolean baseCompatible = !areColorsClashing(top.getColor(), bottom.getColor())
-                              && !areColorsClashing(top.getColor(), footwear.getColor())
-                              && !areColorsClashing(bottom.getColor(), footwear.getColor());
+                && !areColorsClashing(top.getColor(), footwear.getColor())
+                && !areColorsClashing(bottom.getColor(), footwear.getColor());
 
         if (!baseCompatible || outerwear == null) {
             return baseCompatible;
@@ -150,13 +147,15 @@ public class OutfitRecommendationService {
 
         // Additional checks if outerwear is present
         return !areColorsClashing(outerwear.getColor(), top.getColor())
-            && !areColorsClashing(outerwear.getColor(), bottom.getColor())
-            && !areColorsClashing(outerwear.getColor(), footwear.getColor());
+                && !areColorsClashing(outerwear.getColor(), bottom.getColor())
+                && !areColorsClashing(outerwear.getColor(), footwear.getColor());
     }
 
     private boolean areColorsClashing(String color1, String color2) {
         String c1 = color1.toLowerCase().trim();
         String c2 = color2.toLowerCase().trim();
+        if (c1.equals(c2))
+            return false; // same color never clashes
         return CLASHING_PAIRS.contains(Set.of(c1, c2));
     }
 }
