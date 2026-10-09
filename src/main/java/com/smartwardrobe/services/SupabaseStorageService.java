@@ -70,18 +70,9 @@ public class SupabaseStorageService {
     public String uploadBytes(byte[] imageBytes, String contentType, String objectPath)
             throws IOException, InterruptedException {
 
-        if (serviceRoleKey == null || serviceRoleKey.isBlank()) {
-            throw new IllegalStateException(
-                "SUPABASE_SERVICE_ROLE_KEY is not configured. " +
-                "Set it in your .env file from: Supabase Dashboard > Settings > API > service_role key"
-            );
-        }
+        String uploadUrl = baseUrl() + "/storage/v1/object/" + bucket + "/" + objectPath;
 
-        String uploadUrl = supabaseUrl + "/storage/v1/object/" + bucket + "/" + objectPath;
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(uploadUrl))
-                .header("Authorization", "Bearer " + serviceRoleKey)
+        HttpRequest request = withAuth(HttpRequest.newBuilder().uri(URI.create(uploadUrl)))
                 .header("Content-Type", contentType)
                 .header("x-upsert", "true") // overwrite if exists
                 .PUT(HttpRequest.BodyPublishers.ofByteArray(imageBytes))
@@ -91,6 +82,15 @@ public class SupabaseStorageService {
 
         if (response.statusCode() < 200 || response.statusCode() >= 300) {
             log.error("Supabase Storage upload failed. Status: {}, Body: {}", response.statusCode(), response.body());
+            // Storage reports some auth failures as HTTP 400 with "statusCode":"403" in the body.
+            if (response.statusCode() == 401 || response.statusCode() == 403
+                    || response.body().matches("(?s).*\"statusCode\"\\s*:\\s*\"?(401|403)\"?.*")) {
+                throw new IllegalStateException(
+                    "Supabase Storage rejected the server credentials (HTTP " + response.statusCode() + "). " +
+                    "Check SUPABASE_SERVICE_ROLE_KEY (it must be a secret/service_role key, not a publishable key) " +
+                    "and that SUPABASE_URL belongs to the same project."
+                );
+            }
             throw new IOException("Supabase Storage upload failed with status " + response.statusCode() + ": " + response.body());
         }
 
@@ -108,12 +108,10 @@ public class SupabaseStorageService {
      */
     public String getSignedUrl(String objectPath, int expiresInSeconds) {
         try {
-            String signUrl = supabaseUrl + "/storage/v1/object/sign/" + bucket + "/" + objectPath;
+            String signUrl = baseUrl() + "/storage/v1/object/sign/" + bucket + "/" + objectPath;
             String body = "{\"expiresIn\":" + expiresInSeconds + "}";
 
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(signUrl))
-                    .header("Authorization", "Bearer " + serviceRoleKey)
+            HttpRequest request = withAuth(HttpRequest.newBuilder().uri(URI.create(signUrl)))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(body))
                     .build();
@@ -127,13 +125,54 @@ public class SupabaseStorageService {
                 if (idx != -1) {
                     int start = idx + 13;
                     int end = responseBody.indexOf("\"", start);
-                    return supabaseUrl + responseBody.substring(start, end);
+                    // Storage returns a path relative to /storage/v1, e.g. "/object/sign/<bucket>/<path>?token=..."
+                    String signedPath = responseBody.substring(start, end);
+                    return baseUrl() + (signedPath.startsWith("/storage/v1") ? "" : "/storage/v1") + signedPath;
                 }
             }
         } catch (Exception e) {
             log.warn("Could not generate signed URL for path {}: {}", objectPath, e.getMessage());
         }
         return null;
+    }
+
+    /** SUPABASE_URL without a trailing slash. */
+    private String baseUrl() {
+        return supabaseUrl == null ? "" : supabaseUrl.trim().replaceAll("/+$", "");
+    }
+
+    /**
+     * Returns the configured server-side key, or fails with a clear message.
+     * A publishable key must never be used here: it cannot act as a service key.
+     */
+    private String requireServerKey() {
+        String key = serviceRoleKey == null ? "" : serviceRoleKey.trim();
+        if (key.isEmpty()) {
+            throw new IllegalStateException(
+                "SUPABASE_SERVICE_ROLE_KEY is not configured. " +
+                "Set it in your .env file (Supabase Dashboard > Settings > API Keys > Secret keys)."
+            );
+        }
+        if (key.startsWith("sb_publishable_")) {
+            throw new IllegalStateException(
+                "SUPABASE_SERVICE_ROLE_KEY contains a publishable key. " +
+                "Use a server-side secret key (sb_secret_...) or the legacy service_role key."
+            );
+        }
+        return key;
+    }
+
+    /**
+     * Adds credentials to a request. New secret keys (sb_secret_...) are not JWTs, so they are sent
+     * in the "apikey" header only; the legacy service_role key (a JWT) is also sent as a Bearer token.
+     */
+    private HttpRequest.Builder withAuth(HttpRequest.Builder builder) {
+        String key = requireServerKey();
+        builder.header("apikey", key);
+        if (key.startsWith("eyJ")) {
+            builder.header("Authorization", "Bearer " + key);
+        }
+        return builder;
     }
 
     /**

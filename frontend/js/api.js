@@ -199,6 +199,37 @@ const API = {
   },
 
   /**
+   * POST /api/clothes/:id/upload-image — Upload a clothing item's image.
+   * Uses FormData so the browser sets the multipart boundary automatically.
+   */
+  async uploadClothingImage(id, file) {
+    const baseUrl = localStorage.getItem('wardrobe_api_url') || CONFIG.API_BASE_URL;
+    const formData = new FormData();
+    // ImageUploadController explicitly expects the multipart field name "file".
+    formData.append('file', file);
+
+    let response;
+    try {
+      response = await fetch(`${baseUrl}/api/clothes/${encodeURIComponent(id)}/upload-image`, {
+        method: 'POST',
+        body: formData,
+      });
+    } catch (error) {
+      const networkError = new Error('Backend not reachable at ' + baseUrl);
+      networkError.isNetworkError = true;
+      throw networkError;
+    }
+
+    if (!response.ok) {
+      let body = {};
+      try { body = await response.json(); } catch (_) {}
+      throw new Error(body.error || body.message || `Image upload failed (${response.status})`);
+    }
+    const contentType = response.headers.get('content-type') || '';
+    return contentType.includes('application/json') ? response.json() : null;
+  },
+
+  /**
    * PUT /api/clothes/:id — Update a clothing item
    */
   async updateClothingItem(id, clothingItem) {

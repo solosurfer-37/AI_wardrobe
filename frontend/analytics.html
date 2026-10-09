@@ -251,7 +251,25 @@
         </div>
 
         <div class="form-group">
-          <label for="clothing-image">Image URL</label>
+          <label>Add a Picture</label>
+          <input type="file" id="clothing-image-file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" hidden />
+          <div id="clothing-image-upload-area" class="clothing-image-upload-area" role="button" tabindex="0" aria-controls="clothing-image-file">
+            <i data-lucide="upload-cloud"></i>
+            <span>Click to upload an image</span>
+            <small>JPG, PNG, or WEBP · Max 10 MB</small>
+          </div>
+          <div id="clothing-image-preview-wrap" class="clothing-image-preview-wrap" hidden>
+            <img id="clothing-image-preview" alt="Selected clothing preview" />
+            <div class="clothing-image-preview-actions">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('clothing-image-file').click()">Replace</button>
+              <button type="button" class="btn btn-outline btn-sm" id="btn-remove-clothing-image">Remove</button>
+            </div>
+          </div>
+          <span class="form-error" id="clothing-image-error" role="alert"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="clothing-image">Image URL (optional)</label>
           <input type="url" id="clothing-image" placeholder="https://example.com/image.jpg" />
         </div>
 
