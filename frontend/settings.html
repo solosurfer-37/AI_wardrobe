@@ -31,7 +31,37 @@
   <!-- Mobile Overlay -->
   <div class="mobile-overlay" id="mobile-overlay"></div>
 
-  <!-- ═══ Glass Header (bottom dock desktop / top bar mobile) ═══ -->
+<!-- ═══ Top Bar ═══ -->
+<header class="topbar">
+  <div class="topbar-left">
+    <a href="index.html" class="glass-logo logo">
+      <span class="glass-logo-icon logo-icon">
+        <i data-lucide="shirt" class="logo-lucide"></i>
+      </span>
+      <span class="glass-logo-text logo-text">
+        <h1>AI Wardrobe</h1>
+        <span class="logo-tagline">Smart Styling</span>
+      </span>
+    </a>
+  </div>
+
+  <div class="topbar-actions">
+    <div class="glass-user sidebar-user">
+      <div class="glass-avatar user-avatar">AW</div>
+      <div class="user-info">
+        <span class="user-name">Wardrobe User</span>
+        <span class="user-role">Personal Stylist</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ Floating Add Button ═══ -->
+<button class="fab-add" id="btn-add-clothing-topbar" aria-label="Add clothing" title="Add clothing">
+  <i data-lucide="plus"></i>
+</button>
+
+<!-- ═══ Glass Nav Shell ═══ -->
 <header class="glass-shell" id="sidebar">
   <div class="glass-bar">
 
@@ -51,11 +81,11 @@
       </button>
 
       <ul class="glass-links">
-        <li><a href="index.html" class="glass-link nav-item" data-page="dashboard" id="nav-dashboard"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a></li>
-        <li><a href="wardrobe.html" class="glass-link nav-item" data-page="wardrobe" id="nav-wardrobe"><i data-lucide="shirt"></i><span>My Wardrobe</span></a></li>
-        <li><a href="outfits.html" class="glass-link nav-item" data-page="outfits" id="nav-outfits"><i data-lucide="sparkles"></i><span>Outfit Generator</span></a></li>
-        <li><a href="analytics.html" class="glass-link nav-item" data-page="analytics" id="nav-analytics"><i data-lucide="bar-chart-3"></i><span>Analytics</span></a></li>
-        <li><a href="settings.html" class="glass-link nav-item" data-page="settings" id="nav-settings"><i data-lucide="settings"></i><span>Settings</span></a></li>
+        <li><a href="index.html"     class="glass-link nav-item"        data-page="dashboard" id="nav-dashboard"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a></li>
+        <li><a href="wardrobe.html"  class="glass-link nav-item"        data-page="wardrobe"  id="nav-wardrobe"><i data-lucide="shirt"></i><span>My Wardrobe</span></a></li>
+        <li><a href="outfits.html"   class="glass-link nav-item"        data-page="outfits"   id="nav-outfits"><i data-lucide="sparkles"></i><span>Outfit Generator</span></a></li>
+        <li><a href="analytics.html" class="glass-link nav-item"        data-page="analytics" id="nav-analytics"><i data-lucide="bar-chart-3"></i><span>Analytics</span></a></li>
+        <li><a href="settings.html"  class="glass-link nav-item active" data-page="settings"  id="nav-settings"><i data-lucide="settings"></i><span>Settings</span></a></li>
       </ul>
     </nav>
 
@@ -66,25 +96,8 @@
   </div>
 </header>
 
-<!-- ═══ Floating Add Button (bottom-left) ═══ -->
-<button class="fab-add" id="btn-add-clothing-topbar" aria-label="Add clothing" title="Add clothing">
-  <i data-lucide="plus"></i>
-</button>
-
   <!-- Main Content -->
   <main class="main-content" id="main-content">
-    <!-- Top Bar -->
-    <header class="topbar" id="topbar">
-      <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
-        <i data-lucide="menu"></i>
-      </button>
-      <div class="topbar-title" id="topbar-title">Settings</div>
-      <div class="topbar-actions">
-        <button class="topbar-btn" id="btn-add-clothing-topbar" title="Add Clothing">
-          <i data-lucide="plus"></i>
-        </button>
-      </div>
-    </header>
 
     <!-- Page Container -->
     <div class="page-container" id="page-container">
@@ -285,7 +298,7 @@
         </div>
 
         <div class="form-group">
-          <label for="clothing-price">Price ($)</label>
+          <label for="clothing-price">Price (₹)</label>
           <input type="number" id="clothing-price" placeholder="0.00" step="0.01" min="0" />
         </div>
 

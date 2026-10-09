@@ -18,6 +18,15 @@ const AnalyticsPage = {
     this.loadAnalyticsData();
   },
 
+  // ₹ with Indian digit grouping (1,25,000). decimals = 0 for totals, 2 for cost-per-wear.
+  formatINR(n, decimals = 0) {
+    const v = Number(n) || 0;
+    return '₹' + v.toLocaleString('en-IN', {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    });
+  },
+
   async render(container) {
     container.innerHTML = `
       <div class="analytics-page animate-fade-in">
@@ -124,7 +133,9 @@ const AnalyticsPage = {
 
     const total = stats ? stats.totalItems : clothes.length;
     const rate = stats ? Math.round(stats.utilizationRate) : 0;
-    const cpw = stats && stats.averageCostPerWear != null ? `$${stats.averageCostPerWear.toFixed(2)}` : '$0.00';
+    const cpw = stats && stats.averageCostPerWear != null
+      ? this.formatINR(stats.averageCostPerWear, 2)
+      : this.formatINR(0, 2);
     const totalValue = clothes.reduce((sum, item) => sum + (item.price || 0), 0);
 
     grid.innerHTML = `
@@ -156,10 +167,10 @@ const AnalyticsPage = {
       </div>
 
       <div class="card stat-card">
-        <div class="stat-icon rose"><i data-lucide="banknote"></i></div>
+        <div class="stat-icon rose"><i data-lucide="indian-rupee"></i></div>
         <div class="stat-content">
           <div class="stat-label">Wardrobe Value</div>
-          <div class="stat-value">${Utils.formatPrice(totalValue)}</div>
+          <div class="stat-value">${this.formatINR(totalValue)}</div>
           <div class="stat-meta">Total acquisition cost</div>
         </div>
       </div>

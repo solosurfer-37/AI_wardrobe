@@ -31,7 +31,37 @@
   <!-- Mobile Overlay -->
   <div class="mobile-overlay" id="mobile-overlay"></div>
 
-<!-- ═══ Glass Header (bottom dock desktop / top bar mobile) ═══ -->
+<!-- ═══ Top Bar ═══ -->
+<header class="topbar">
+  <div class="topbar-left">
+    <a href="index.html" class="glass-logo logo">
+      <span class="glass-logo-icon logo-icon">
+        <i data-lucide="shirt" class="logo-lucide"></i>
+      </span>
+      <span class="glass-logo-text logo-text">
+        <h1>AI Wardrobe</h1>
+        <span class="logo-tagline">Smart Styling</span>
+      </span>
+    </a>
+  </div>
+
+  <div class="topbar-actions">
+    <div class="glass-user sidebar-user">
+      <div class="glass-avatar user-avatar">AW</div>
+      <div class="user-info">
+        <span class="user-name">Wardrobe User</span>
+        <span class="user-role">Personal Stylist</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ Floating Add Button ═══ -->
+<button class="fab-add" id="btn-add-clothing-topbar" aria-label="Add clothing" title="Add clothing">
+  <i data-lucide="plus"></i>
+</button>
+
+<!-- ═══ Glass Nav Shell ═══ -->
 <header class="glass-shell" id="sidebar">
   <div class="glass-bar">
 
@@ -51,11 +81,11 @@
       </button>
 
       <ul class="glass-links">
-        <li><a href="index.html" class="glass-link nav-item" data-page="dashboard" id="nav-dashboard"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a></li>
-        <li><a href="wardrobe.html" class="glass-link nav-item" data-page="wardrobe" id="nav-wardrobe"><i data-lucide="shirt"></i><span>My Wardrobe</span></a></li>
-        <li><a href="outfits.html" class="glass-link nav-item" data-page="outfits" id="nav-outfits"><i data-lucide="sparkles"></i><span>Outfit Generator</span></a></li>
-        <li><a href="analytics.html" class="glass-link nav-item" data-page="analytics" id="nav-analytics"><i data-lucide="bar-chart-3"></i><span>Analytics</span></a></li>
-        <li><a href="settings.html" class="glass-link nav-item" data-page="settings" id="nav-settings"><i data-lucide="settings"></i><span>Settings</span></a></li>
+        <li><a href="index.html"    class="glass-link nav-item"        data-page="dashboard" id="nav-dashboard"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a></li>
+        <li><a href="wardrobe.html" class="glass-link nav-item"        data-page="wardrobe"  id="nav-wardrobe"><i data-lucide="shirt"></i><span>My Wardrobe</span></a></li>
+        <li><a href="outfits.html"  class="glass-link nav-item active" data-page="outfits"   id="nav-outfits"><i data-lucide="sparkles"></i><span>Outfit Generator</span></a></li>
+        <li><a href="analytics.html" class="glass-link nav-item"       data-page="analytics" id="nav-analytics"><i data-lucide="bar-chart-3"></i><span>Analytics</span></a></li>
+        <li><a href="settings.html" class="glass-link nav-item"        data-page="settings"  id="nav-settings"><i data-lucide="settings"></i><span>Settings</span></a></li>
       </ul>
     </nav>
 
@@ -66,82 +96,18 @@
   </div>
 </header>
 
-<!-- ═══ Floating Add Button (bottom-left) ═══ -->
-<button class="fab-add" id="btn-add-clothing-topbar" aria-label="Add clothing" title="Add clothing">
-  <i data-lucide="plus"></i>
-</button>
-
-
   <!-- Main Content -->
   <main class="main-content" id="main-content">
-    <!-- Top Bar -->
-    <header class="topbar" id="topbar">
-      <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
-        <i data-lucide="menu"></i>
-      </button>
-      <div class="topbar-title" id="topbar-title">Outfit Generator</div>
-      <div class="topbar-actions">
-        <button class="topbar-btn" id="btn-add-clothing-topbar" title="Add Clothing">
-          <i data-lucide="plus"></i>
-        </button>
-      </div>
-    </header>
 
     <!-- Page Container -->
     <div class="page-container" id="page-container">
       <div class="outfits-page animate-fade-in">
-        <!-- Hero Generator Banner -->
-        <section class="outfit-hero">
-          <div class="outfit-hero-content">
-            <div class="outfit-hero-icon">
-              <i data-lucide="sparkles"></i>
-            </div>
-            <h2>Smart Outfit Generator</h2>
-            <p>
-              Weather-aware, color-harmonized outfit combinations configured to rotate your least-worn clothes.
-            </p>
-
-            <!-- Coordinate Controls -->
-            <div style="display: flex; gap: var(--space-3); justify-content: center; align-items: center; max-width: 520px; margin: 0 auto var(--space-6); flex-wrap: wrap;">
-              <div style="display: flex; align-items: center; gap: var(--space-2); background: var(--bg-card); padding: var(--space-2) var(--space-4); border-radius: var(--radius-lg); border: 1px solid var(--border-medium);">
-                <i data-lucide="map-pin" style="width: 16px; height: 16px; color: var(--color-olive);"></i>
-                <input 
-                  type="number" 
-                  id="outfit-lat" 
-                  step="0.0001" 
-                  placeholder="Lat" 
-                  value="28.6139" 
-                  style="width: 80px; border: none; background: transparent; font-size: var(--text-sm); font-weight: var(--weight-medium);" 
-                />
-                <span style="color: var(--border-dark);">,</span>
-                <input 
-                  type="number" 
-                  id="outfit-lon" 
-                  step="0.0001" 
-                  placeholder="Lon" 
-                  value="77.2090" 
-                  style="width: 80px; border: none; background: transparent; font-size: var(--text-sm); font-weight: var(--weight-medium);" 
-                />
-              </div>
-
-              <button class="btn btn-secondary btn-sm" id="btn-use-location" title="Detect GPS Location">
-                <i data-lucide="crosshair"></i> Current GPS
-              </button>
-            </div>
-
-            <button class="btn btn-generate" id="btn-generate-outfits">
-              <i data-lucide="sparkles"></i>
-              Generate Recommendations
-            </button>
-          </div>
-        </section>
-
-        <!-- Results Section -->
+        <!-- Results (auto-generated on load) -->
         <div class="outfit-results" id="outfit-results-container">
           <div class="outfit-results-header">
             <div>
               <h3>Consulting Style Engine...</h3>
-              <p class="section-subtitle">Querying weather forecasts, checking wear history, & matching color charts</p>
+              <p class="section-subtitle">Querying weather forecasts, checking wear history, &amp; matching color charts</p>
             </div>
           </div>
           <div class="outfit-skeleton-grid">
@@ -150,6 +116,9 @@
             <div class="skeleton outfit-skeleton-card"></div>
           </div>
         </div>
+
+        <!-- Weather + DateTime Info Bar -->
+        <div id="outfit-weather-bar" class="outfit-weather-bar" style="display:none;"></div>
       </div>
     </div>
   </main>
@@ -250,7 +219,7 @@
         </div>
 
         <div class="form-group">
-          <label for="clothing-price">Price ($)</label>
+          <label for="clothing-price">Price (₹)</label>
           <input type="number" id="clothing-price" placeholder="0.00" step="0.01" min="0" />
         </div>
 
