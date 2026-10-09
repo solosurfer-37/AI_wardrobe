@@ -35,6 +35,7 @@ public class ClothingItem {
 
     private String pattern;
 
+    @Column(length = 2048)
     private String imageUrl;
 
     private LocalDate lastWornDate;
@@ -56,10 +57,13 @@ public class ClothingItem {
 
     private Double rating = 0.0;
 
+    @Column(length = 2048)
     private String imagePath;
 
+    @Column(length = 2048)
     private String originalImagePath;
 
+    @Column(length = 2048)
     private String extractedImagePath;
 
     @JsonIgnore

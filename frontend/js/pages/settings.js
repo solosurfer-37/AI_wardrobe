@@ -194,3 +194,4 @@ const SettingsPage = {
     }
   },
 };
+window.SettingsPage = SettingsPage;
