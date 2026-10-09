@@ -1,0 +1,138 @@
+/* ═══════════════════════════════════════════════════════
+   AI Wardrobe — Responsive Breakpoints
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Tablet (≤1024px) ── */
+@media (max-width: 1024px) {
+  .dashboard-stats { grid-template-columns: repeat(2, 1fr); }
+  .analytics-stats { grid-template-columns: repeat(2, 1fr); }
+  .dashboard-sections { grid-template-columns: 1fr; }
+  .analytics-sections { grid-template-columns: 1fr; }
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+
+  .outfit-list { grid-template-columns: 1fr 1fr; }
+  .outfit-skeleton-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ── Mobile landscape & small tablets (≤768px) ── */
+@media (max-width: 768px) {
+  /* Sidebar collapses */
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-close {
+    display: flex;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+
+  .menu-toggle {
+    display: flex;
+  }
+
+  .topbar {
+    padding: 0 var(--space-4);
+  }
+
+  .page-container {
+    padding: var(--space-5) var(--space-4);
+  }
+
+  /* Dashboard */
+  .dashboard-welcome {
+    padding: var(--space-6) var(--space-5);
+  }
+
+  .welcome-title {
+    font-size: var(--text-2xl);
+  }
+
+  .welcome-actions {
+    flex-direction: column;
+  }
+
+  /* Wardrobe */
+  .wardrobe-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .wardrobe-toolbar .search-container {
+    max-width: none;
+  }
+
+  .wardrobe-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: var(--space-4);
+  }
+
+  /* Outfits */
+  .outfit-hero {
+    padding: var(--space-6) var(--space-4);
+  }
+
+  .outfit-hero h2 {
+    font-size: var(--text-2xl);
+  }
+
+  .outfit-list { grid-template-columns: 1fr; }
+  .outfit-skeleton-grid { grid-template-columns: 1fr; }
+
+  /* Toasts */
+  .toast-container {
+    left: var(--space-4);
+    right: var(--space-4);
+    bottom: var(--space-4);
+  }
+
+  .toast {
+    max-width: none;
+  }
+
+  /* Modal */
+  .modal {
+    margin: var(--space-4);
+    max-width: none;
+  }
+}
+
+/* ── Mobile portrait (≤480px) ── */
+@media (max-width: 480px) {
+  .dashboard-stats { grid-template-columns: 1fr; }
+  .analytics-stats { grid-template-columns: 1fr; }
+  .grid-4 { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr; }
+  .grid-2 { grid-template-columns: 1fr; }
+
+  .wardrobe-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+
+  .clothing-card-image {
+    height: 160px;
+  }
+
+  .outfit-items-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bar-chart {
+    gap: var(--space-2);
+  }
+
+  .welcome-title {
+    font-size: var(--text-xl);
+  }
+
+  .outfit-hero h2 {
+    font-size: var(--text-xl);
+  }
+}

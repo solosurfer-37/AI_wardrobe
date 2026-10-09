@@ -1,0 +1,192 @@
+/* ═══════════════════════════════════════════════════════
+   AI Wardrobe — Utility Functions
+   ═══════════════════════════════════════════════════════ */
+
+const Utils = {
+  /**
+   * Get the category group for a clothing type.
+   */
+  getCategoryGroup(type) {
+    const t = (type || '').toLowerCase().trim();
+    for (const [group, types] of Object.entries(CONFIG.CATEGORIES)) {
+      if (types.includes(t)) return group;
+    }
+    return 'other';
+  },
+
+  /**
+   * Get a friendly category label.
+   */
+  getCategoryLabel(type) {
+    const group = this.getCategoryGroup(type);
+    return group.charAt(0).toUpperCase() + group.slice(1);
+  },
+
+  /**
+   * Get CSS background color for a color name.
+   */
+  getColorCSS(colorName) {
+    return CONFIG.COLOR_MAP[(colorName || '').toLowerCase().trim()] || '#D4C9B8';
+  },
+
+  /**
+   * Capitalize first letter.
+   */
+  capitalize(str) {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  },
+
+  /**
+   * Format a price value.
+   */
+  formatPrice(price) {
+    if (price == null || price === 0) return '—';
+    return '$' + Number(price).toFixed(2);
+  },
+
+  /**
+   * Format a date string for display.
+   */
+  formatDate(dateStr) {
+    if (!dateStr) return 'Never';
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return 'Never';
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  },
+
+  /**
+   * Time-ago relative string.
+   */
+  timeAgo(dateStr) {
+    if (!dateStr) return 'Never worn';
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return 'Never worn';
+    const days = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24));
+    if (days === 0) return 'Today';
+    if (days === 1) return 'Yesterday';
+    if (days < 7) return `${days} days ago`;
+    if (days < 30) return `${Math.floor(days / 7)} week${Math.floor(days / 7) > 1 ? 's' : ''} ago`;
+    if (days < 365) return `${Math.floor(days / 30)} month${Math.floor(days / 30) > 1 ? 's' : ''} ago`;
+    return `${Math.floor(days / 365)} year${Math.floor(days / 365) > 1 ? 's' : ''} ago`;
+  },
+
+  /**
+   * Create a clothing card element.
+   */
+  createClothingCard(item, onClick) {
+    const card = document.createElement('div');
+    card.className = 'card clothing-card card-clickable animate-fade-in-up';
+    card.setAttribute('data-id', item.id);
+
+    const imageHTML = item.imageUrl && item.imageUrl.startsWith('http')
+      ? `<img src="${this.escapeHTML(item.imageUrl)}" alt="${this.escapeHTML(item.type)}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'clothing-placeholder-icon\\'><i data-lucide=\\'shirt\\'></i></div>'; lucide.createIcons();" />`
+      : `<div class="clothing-placeholder-icon"><i data-lucide="shirt"></i></div>`;
+
+    card.innerHTML = `
+      <div class="clothing-card-image">${imageHTML}</div>
+      <div class="clothing-card-info">
+        <div class="clothing-card-type">${this.escapeHTML(this.capitalize(item.type))}</div>
+        <div class="clothing-card-meta">
+          <span class="badge badge-neutral">
+            <span class="color-dot" style="background:${this.getColorCSS(item.color)}"></span>
+            ${this.escapeHTML(this.capitalize(item.color || ''))}
+          </span>
+          ${item.pattern ? `<span class="badge badge-neutral">${this.escapeHTML(this.capitalize(item.pattern))}</span>` : ''}
+          <span class="badge badge-olive">${item.wearCount || 0} wears</span>
+        </div>
+      </div>
+    `;
+
+    if (onClick) {
+      card.addEventListener('click', () => onClick(item));
+    }
+
+    return card;
+  },
+
+  /**
+   * Show the clothing detail modal.
+   */
+  showClothingDetail(item) {
+    const modal = document.getElementById('clothing-detail-modal');
+    const title = document.getElementById('detail-title');
+    const body = document.getElementById('detail-body');
+
+    title.textContent = this.capitalize(item.type);
+
+    const imageHTML = item.imageUrl && item.imageUrl.startsWith('http')
+      ? `<img src="${this.escapeHTML(item.imageUrl)}" alt="${this.escapeHTML(item.type)}" onerror="this.parentElement.innerHTML='<div class=\\'clothing-placeholder-icon\\'><i data-lucide=\\'shirt\\'></i></div>'; lucide.createIcons();" />`
+      : `<div class="clothing-placeholder-icon" style="width:64px;height:64px"><i data-lucide="shirt"></i></div>`;
+
+    body.innerHTML = `
+      <div class="detail-image-container">${imageHTML}</div>
+      <div class="detail-field">
+        <span class="detail-field-label">Type</span>
+        <span class="detail-field-value">${this.escapeHTML(item.type)}</span>
+      </div>
+      <div class="detail-field">
+        <span class="detail-field-label">Category</span>
+        <span class="detail-field-value">${this.getCategoryLabel(item.type)}</span>
+      </div>
+      <div class="detail-field">
+        <span class="detail-field-label">Color</span>
+        <span class="detail-field-value" style="display:flex;align-items:center;gap:8px">
+          <span class="color-dot" style="background:${this.getColorCSS(item.color)}"></span>
+          ${this.escapeHTML(this.capitalize(item.color || ''))}
+        </span>
+      </div>
+      <div class="detail-field">
+        <span class="detail-field-label">Pattern</span>
+        <span class="detail-field-value">${this.escapeHTML(item.pattern || '—')}</span>
+      </div>
+      <div class="detail-field">
+        <span class="detail-field-label">Price</span>
+        <span class="detail-field-value">${this.formatPrice(item.price)}</span>
+      </div>
+      <div class="detail-field">
+        <span class="detail-field-label">Wear Count</span>
+        <span class="detail-field-value">${item.wearCount || 0} times</span>
+      </div>
+      <div class="detail-field">
+        <span class="detail-field-label">Last Worn</span>
+        <span class="detail-field-value">${this.formatDate(item.lastWornDate)}</span>
+      </div>
+    `;
+
+    modal.classList.add('active');
+    lucide.createIcons();
+  },
+
+  /**
+   * Generate skeleton loading cards.
+   */
+  skeletonCards(count, className = 'skeleton-card') {
+    return Array(count).fill(0).map(() => `<div class="skeleton ${className}"></div>`).join('');
+  },
+
+  /**
+   * Escape HTML to prevent XSS.
+   */
+  escapeHTML(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  },
+
+  /**
+   * Debounce function.
+   */
+  debounce(fn, delay = 300) {
+    let timer;
+    return function (...args) {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn.apply(this, args), delay);
+    };
+  },
+};

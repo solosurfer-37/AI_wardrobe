@@ -10,15 +10,22 @@ import java.util.List;
 public class ClothingItemService {
 
     private final ClothingItemRepository clothingItemRepository;
+    private final com.smartwardrobe.repositories.UserRepository userRepository;
 
-    public ClothingItemService(ClothingItemRepository clothingItemRepository) {
+    public ClothingItemService(ClothingItemRepository clothingItemRepository, com.smartwardrobe.repositories.UserRepository userRepository) {
         this.clothingItemRepository = clothingItemRepository;
+        this.userRepository = userRepository;
     }
 
     /**
      * Persists a new clothing item.
      */
     public ClothingItem addClothingItem(ClothingItem clothingItem) {
+        if (clothingItem.getUser() == null) {
+            com.smartwardrobe.entities.User defaultUser = userRepository.findAll().stream().findFirst()
+                    .orElseGet(() -> userRepository.save(new com.smartwardrobe.entities.User("default_user", "user@wardrobe.ai")));
+            clothingItem.setUser(defaultUser);
+        }
         return clothingItemRepository.save(clothingItem);
     }
 

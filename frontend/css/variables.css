@@ -1,0 +1,127 @@
+/* ═══════════════════════════════════════════════════════
+   AI Wardrobe — Design Tokens & CSS Custom Properties
+   Premium fashion-tech aesthetic with warm ivory palette
+   ═══════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Color Palette ── */
+  --color-ivory:        #FAF8F5;
+  --color-cream:        #F5F0E8;
+  --color-warm-white:   #FFFDF9;
+  --color-beige:        #E8E0D4;
+  --color-beige-dark:   #D4C9B8;
+  --color-charcoal:     #2C2C2C;
+  --color-charcoal-light: #3D3D3D;
+  --color-graphite:     #5A5A5A;
+  --color-slate:        #7A7A7A;
+  --color-olive:        #6B7B5E;
+  --color-olive-light:  #8A9E78;
+  --color-olive-muted:  #A3B891;
+  --color-olive-bg:     #F0F4EC;
+  --color-amber:        #C49A3C;
+  --color-amber-light:  #F5E6C8;
+  --color-rose:         #C27C7C;
+  --color-rose-light:   #F5E0E0;
+  --color-sky:          #6B9BC3;
+  --color-sky-light:    #E0EDF5;
+
+  /* ── Semantic Colors ── */
+  --bg-primary:         var(--color-ivory);
+  --bg-secondary:       var(--color-cream);
+  --bg-card:            var(--color-warm-white);
+  --bg-sidebar:         var(--color-charcoal);
+  --bg-hover:           rgba(107, 123, 94, 0.06);
+  --bg-active:          rgba(107, 123, 94, 0.12);
+
+  --text-primary:       var(--color-charcoal);
+  --text-secondary:     var(--color-graphite);
+  --text-muted:         var(--color-slate);
+  --text-inverse:       var(--color-ivory);
+  --text-accent:        var(--color-olive);
+
+  --border-light:       rgba(0, 0, 0, 0.06);
+  --border-medium:      rgba(0, 0, 0, 0.10);
+  --border-input:       var(--color-beige);
+
+  --accent-primary:     var(--color-olive);
+  --accent-secondary:   var(--color-amber);
+  --color-success:      #5E8C61;
+  --color-warning:      #C49A3C;
+  --color-error:        #C27C7C;
+  --color-info:         #6B9BC3;
+
+  /* ── Typography ── */
+  --font-sans:          'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-serif:         'Playfair Display', Georgia, 'Times New Roman', serif;
+
+  --text-xs:            0.75rem;
+  --text-sm:            0.8125rem;
+  --text-base:          0.9375rem;
+  --text-md:            1rem;
+  --text-lg:            1.125rem;
+  --text-xl:            1.3125rem;
+  --text-2xl:           1.625rem;
+  --text-3xl:           2rem;
+  --text-4xl:           2.5rem;
+
+  --weight-light:       300;
+  --weight-regular:     400;
+  --weight-medium:      500;
+  --weight-semibold:    600;
+  --weight-bold:        700;
+  --weight-extrabold:   800;
+
+  --leading-tight:      1.2;
+  --leading-normal:     1.5;
+  --leading-relaxed:    1.7;
+
+  /* ── Spacing ── */
+  --space-1:            0.25rem;
+  --space-2:            0.5rem;
+  --space-3:            0.75rem;
+  --space-4:            1rem;
+  --space-5:            1.25rem;
+  --space-6:            1.5rem;
+  --space-8:            2rem;
+  --space-10:           2.5rem;
+  --space-12:           3rem;
+  --space-16:           4rem;
+  --space-20:           5rem;
+  --space-24:           6rem;
+
+  /* ── Borders & Radius ── */
+  --radius-sm:          6px;
+  --radius-md:          10px;
+  --radius-lg:          14px;
+  --radius-xl:          20px;
+  --radius-2xl:         24px;
+  --radius-full:        9999px;
+
+  /* ── Shadows ── */
+  --shadow-xs:          0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm:          0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md:          0 4px 6px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-lg:          0 10px 15px rgba(0, 0, 0, 0.06), 0 4px 6px rgba(0, 0, 0, 0.04);
+  --shadow-xl:          0 20px 25px rgba(0, 0, 0, 0.08), 0 8px 10px rgba(0, 0, 0, 0.04);
+  --shadow-card:        0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-card-hover:  0 8px 25px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.04);
+  --shadow-modal:       0 25px 50px rgba(0, 0, 0, 0.15);
+
+  /* ── Transitions ── */
+  --transition-fast:    150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal:  250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow:    350ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring:  400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ── Layout ── */
+  --sidebar-width:      260px;
+  --topbar-height:      64px;
+  --content-max-width:  1280px;
+
+  /* ── Z-indices ── */
+  --z-sidebar:          100;
+  --z-topbar:           90;
+  --z-modal:            200;
+  --z-toast:            300;
+  --z-overlay:          150;
+}
