@@ -145,7 +145,7 @@
 .clothing-card-image img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   transition: transform 0.4s ease;
 }
 
@@ -567,7 +567,7 @@
   margin-bottom: var(--space-5);
 }
 
-.detail-image-container img { width: 100%; height: 100%; object-fit: cover; }
+.detail-image-container img { width: 100%; height: 100%; object-fit: contain; }
 
 .detail-field {
   display: flex;
@@ -587,7 +587,6 @@
 
 /* ── Wardrobe page: lavender bg + editorial cards ── */
 body[data-page="wardrobe"] { background: #e8e8f5; }
-body[data-page="wardrobe"] .topbar { background: transparent; border-bottom: none; backdrop-filter: none; }
 
 .wardrobe-page .clothing-card {
   display: flex;
@@ -658,24 +657,6 @@ body[data-page="wardrobe"] .topbar { background: transparent; border-bottom: non
   margin: 0;
 }
 
-/* ── Sab pills saaf dikhein (Footwear bhi), aur row me align rahein ── */
-.wardrobe-page .wardrobe-toolbar { align-items: center; }
-
-.wardrobe-page .wardrobe-toolbar .filter-bar {
-  overflow: visible;
-  max-width: none;
-  width: auto;
-}
-
-.wardrobe-page .wardrobe-toolbar .filter-pill {
-  flex-shrink: 0;
-  white-space: nowrap;
-  margin: 0;
-}
-
-.wardrobe-page .wardrobe-toolbar .select-input,
-.wardrobe-page .wardrobe-toolbar .btn { margin: 0; align-self: center; }
-
 /* Add-item image upload */
 .clothing-image-upload-area {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
@@ -690,3 +671,8 @@ body[data-page="wardrobe"] .topbar { background: transparent; border-bottom: non
 .clothing-image-preview-wrap img { width: 110px; height: 110px; object-fit: contain; border: 1px solid var(--border-medium); border-radius: var(--radius-md); background: var(--bg-card); }
 .clothing-image-preview-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 #clothing-image-error { display: block; color: var(--color-error); margin-top: 6px; }
+
+/* ── Wardrobe page header ──
+   Do not override .topbar here. The wardrobe page should inherit the same
+   shared topbar styling as the Dashboard, without affecting other pages.
+*/
