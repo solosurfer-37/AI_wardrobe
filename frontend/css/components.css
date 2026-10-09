@@ -675,3 +675,100 @@ body[data-page="wardrobe"] .topbar { background: transparent; border-bottom: non
 
 .wardrobe-page .wardrobe-toolbar .select-input,
 .wardrobe-page .wardrobe-toolbar .btn { margin: 0; align-self: center; }
+
+
+
+
+
+
+
+/* ── Outfits page ── */
+.outfits-page { display: flex; flex-direction: column; gap: 24px; }
+
+/* weather bar results ke upar aa jaye (HTML me ye neeche likha hai) */
+.outfits-page .outfit-weather-bar { order: -1; }
+
+.outfit-weather-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px 28px;
+  padding: 18px 24px;
+  border-radius: 14px;
+  color: #fff;
+  background: linear-gradient(135deg, #2C2C2C 0%, #3D3D3D 60%, #4A5240 100%);
+  box-shadow: 0 8px 22px rgba(30, 30, 80, 0.16);
+  position: relative;
+  overflow: hidden;
+}
+.outfit-weather-bar::after {
+  content: '';
+  position: absolute;
+  right: -40px; top: -50px;
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+}
+.outfit-weather-bar > * {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: inherit;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+.outfit-weather-bar svg,
+.outfit-weather-bar i { width: 20px; height: 20px; flex-shrink: 0; }
+.outfit-weather-bar strong,
+.outfit-weather-bar b { font-size: 26px; font-weight: 700; line-height: 1; }
+.outfit-weather-bar small,
+.outfit-weather-bar .section-subtitle { color: rgba(255, 255, 255, 0.85); font-size: 12px; margin: 0; }
+.outfit-weather-bar > :last-child { margin-left: auto; }
+
+/* ── Results ── */
+.outfit-results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.outfit-results-header h3 { font-size: 22px; font-weight: 700; color: #14142b; margin: 0; }
+
+.outfit-list,
+.outfit-skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.outfit-list > * {
+  background: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 4px 14px rgba(30, 30, 80, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.outfit-list > *:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgba(30, 30, 80, 0.16);
+}
+
+.outfit-skeleton-card { height: 320px; border-radius: 14px; }
+
+.outfit-items-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.outfit-items-grid img { width: 100%; border-radius: 10px; object-fit: cover; }
+
+@media (max-width: 1024px) {
+  .outfit-list, .outfit-skeleton-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .outfit-list, .outfit-skeleton-grid { grid-template-columns: 1fr; }
+  .outfit-weather-bar { gap: 12px 20px; padding: 16px 18px; }
+  .outfit-weather-bar > :last-child { margin-left: 0; }
+}
