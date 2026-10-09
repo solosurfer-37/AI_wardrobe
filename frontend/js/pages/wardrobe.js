@@ -9,6 +9,22 @@ const WardrobePage = {
   searchTerm: '',
   sortBy: 'least-worn',
 
+  init() {
+    const container = document.getElementById('page-container');
+    // If static HTML isn't already present in container, render it
+    if (container && !document.getElementById('wardrobe-items-grid')) {
+      this.render(container);
+      return;
+    }
+
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+
+    this.bindEvents();
+    this.fetchItems();
+  },
+
   async render(container) {
     container.innerHTML = `
       <div class="wardrobe-page animate-fade-in">
@@ -72,7 +88,8 @@ const WardrobePage = {
   bindEvents() {
     // Add Item button
     const addBtn = document.getElementById('btn-open-add-clothing');
-    if (addBtn) {
+    if (addBtn && !addBtn._hasHandler) {
+      addBtn._hasHandler = true;
       addBtn.addEventListener('click', () => {
         const modal = document.getElementById('add-clothing-modal');
         if (modal) modal.classList.add('active');
@@ -82,17 +99,21 @@ const WardrobePage = {
     // Category filter pills
     const pills = document.querySelectorAll('.wardrobe-toolbar .filter-pill');
     pills.forEach(pill => {
-      pill.addEventListener('click', (e) => {
-        pills.forEach(p => p.classList.remove('active'));
-        e.currentTarget.classList.add('active');
-        this.activeCategory = e.currentTarget.getAttribute('data-category');
-        this.renderFilteredItems();
-      });
+      if (!pill._hasHandler) {
+        pill._hasHandler = true;
+        pill.addEventListener('click', (e) => {
+          pills.forEach(p => p.classList.remove('active'));
+          e.currentTarget.classList.add('active');
+          this.activeCategory = e.currentTarget.getAttribute('data-category');
+          this.renderFilteredItems();
+        });
+      }
     });
 
     // Color filter select
     const colorSelect = document.getElementById('wardrobe-color-filter');
-    if (colorSelect) {
+    if (colorSelect && !colorSelect._hasHandler) {
+      colorSelect._hasHandler = true;
       colorSelect.addEventListener('change', (e) => {
         this.selectedColor = e.target.value;
         this.renderFilteredItems();
@@ -101,7 +122,8 @@ const WardrobePage = {
 
     // Sort select
     const sortSelect = document.getElementById('wardrobe-sort');
-    if (sortSelect) {
+    if (sortSelect && !sortSelect._hasHandler) {
+      sortSelect._hasHandler = true;
       sortSelect.addEventListener('change', (e) => {
         this.sortBy = e.target.value;
         this.renderFilteredItems();
@@ -110,7 +132,8 @@ const WardrobePage = {
 
     // Search input with debounce
     const searchInput = document.getElementById('wardrobe-search-input');
-    if (searchInput) {
+    if (searchInput && !searchInput._hasHandler) {
+      searchInput._hasHandler = true;
       searchInput.addEventListener('input', Utils.debounce((e) => {
         this.searchTerm = e.target.value.toLowerCase().trim();
         this.renderFilteredItems();
@@ -120,7 +143,7 @@ const WardrobePage = {
 
   async fetchItems() {
     try {
-      this.items = await API.getAllClothes();
+      this.items = await API.getAllClothes() || [];
       this.renderFilteredItems();
     } catch (err) {
       console.error('Failed to load wardrobe:', err);
@@ -131,11 +154,15 @@ const WardrobePage = {
             <i data-lucide="alert-triangle" class="empty-icon" style="color: var(--color-error);"></i>
             <h4>Could not load wardrobe</h4>
             <p>${Utils.escapeHTML(err.message)}</p>
-            <button class="btn btn-outline btn-sm" onclick="WardrobePage.fetchItems()" style="margin-top: var(--space-4);">
+            <button class="btn btn-outline btn-sm" id="btn-retry-wardrobe" style="margin-top: var(--space-4);">
               <i data-lucide="rotate-cw"></i> Retry
             </button>
           </div>
         `;
+        const retryBtn = document.getElementById('btn-retry-wardrobe');
+        if (retryBtn) {
+          retryBtn.addEventListener('click', () => WardrobePage.fetchItems());
+        }
         if (window.lucide) lucide.createIcons();
       }
     }

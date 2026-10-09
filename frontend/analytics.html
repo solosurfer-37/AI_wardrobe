@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="AI Wardrobe — Your intelligent digital closet and outfit recommendation platform. Maximize wardrobe utilization with smart styling." />
-  <title>Dashboard — AI Wardrobe</title>
+  <meta name="description" content="AI Wardrobe — Wardrobe utilization health, cost-per-wear metrics, and rotation statistics." />
+  <title>Analytics & Insights — AI Wardrobe</title>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -27,7 +27,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
 </head>
-<body data-page="dashboard">
+<body data-page="analytics">
   <!-- Mobile Overlay -->
   <div class="mobile-overlay" id="mobile-overlay"></div>
 
@@ -49,7 +49,7 @@
     </div>
 
     <nav class="sidebar-nav" id="sidebar-nav">
-      <a href="index.html" class="nav-item active" data-page="dashboard" id="nav-dashboard">
+      <a href="index.html" class="nav-item" data-page="dashboard" id="nav-dashboard">
         <i data-lucide="layout-dashboard"></i>
         <span>Dashboard</span>
       </a>
@@ -61,7 +61,7 @@
         <i data-lucide="sparkles"></i>
         <span>Outfit Generator</span>
       </a>
-      <a href="analytics.html" class="nav-item" data-page="analytics" id="nav-analytics">
+      <a href="analytics.html" class="nav-item active" data-page="analytics" id="nav-analytics">
         <i data-lucide="bar-chart-3"></i>
         <span>Analytics</span>
       </a>
@@ -89,7 +89,7 @@
       <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
         <i data-lucide="menu"></i>
       </button>
-      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-title" id="topbar-title">Analytics & Insights</div>
       <div class="topbar-actions">
         <button class="topbar-btn" id="btn-add-clothing-topbar" title="Add Clothing">
           <i data-lucide="plus"></i>
@@ -99,62 +99,76 @@
 
     <!-- Page Container -->
     <div class="page-container" id="page-container">
-      <div class="dashboard-page animate-fade-in">
-        <!-- Hero Banner -->
-        <section class="dashboard-welcome">
-          <div class="welcome-content">
-            <span class="welcome-eyebrow">Smart Wardrobe Intelligence</span>
-            <h1 class="welcome-title">Curated Style, Smarter Rotation</h1>
-            <p class="welcome-subtitle">
-              Maximize your closet's potential with AI-driven weather styling, rotation tracking, and cost-per-wear analytics.
-            </p>
-            <div class="welcome-actions">
-              <a href="outfits.html" class="btn btn-generate">
-                <i data-lucide="sparkles"></i>
-                Generate Today's Outfit
-              </a>
-              <a href="wardrobe.html" class="btn btn-wardrobe-link">
-                <i data-lucide="shirt"></i>
-                View Wardrobe
-              </a>
-            </div>
+      <div class="analytics-page animate-fade-in">
+        <div class="section-header" style="margin-bottom: var(--space-6);">
+          <div>
+            <h2 class="section-title">Wardrobe Analytics</h2>
+            <p class="section-subtitle">Utilization health, cost-per-wear return, and wardrobe rotation statistics</p>
           </div>
-        </section>
+        </div>
 
-        <!-- Stats Grid (Loading Skeleton) -->
-        <div class="dashboard-stats" id="dashboard-stats-grid">
+        <!-- Top Stat Cards -->
+        <div class="analytics-stats" id="analytics-stats-grid">
           <div class="skeleton skeleton-card"></div>
           <div class="skeleton skeleton-card"></div>
           <div class="skeleton skeleton-card"></div>
           <div class="skeleton skeleton-card"></div>
         </div>
 
-        <!-- Two-Column Sections -->
-        <div class="dashboard-sections">
-          <!-- Underutilized Items -->
-          <div class="card dashboard-section-card">
+        <!-- Main Chart & Meter Sections -->
+        <div class="analytics-sections">
+          <!-- Circular Utilization Meter -->
+          <div class="card analytics-card">
             <div class="section-header">
               <div>
-                <h3 class="section-title">Underutilized Pieces</h3>
-                <p class="section-subtitle">Items ready for more wear in your rotation</p>
+                <h3 class="section-title">Utilization Score</h3>
+                <p class="section-subtitle">Percentage of wardrobe active in the last 30 days</p>
               </div>
-              <a href="wardrobe.html" class="btn btn-ghost btn-sm">View All</a>
             </div>
-            <div id="dashboard-least-worn-list">
-              <div class="skeleton" style="height: 180px; border-radius: var(--radius-md);"></div>
+            <div class="utilization-meter" id="analytics-utilization-meter">
+              <div class="skeleton" style="width: 160px; height: 160px; border-radius: 50%; margin: 0 auto;"></div>
             </div>
           </div>
 
-          <!-- Schedule & Smart Context -->
-          <div class="card dashboard-section-card">
+          <!-- Category Breakdown Bar Chart -->
+          <div class="card analytics-card">
             <div class="section-header">
               <div>
-                <h3 class="section-title">Today's Schedule & Climate</h3>
-                <p class="section-subtitle">Context-aware styling recommendations</p>
+                <h3 class="section-title">Category Distribution</h3>
+                <p class="section-subtitle">Balance of tops, bottoms, outerwear, & footwear</p>
               </div>
             </div>
-            <div id="dashboard-context-content">
-              <div class="skeleton" style="height: 180px; border-radius: var(--radius-md);"></div>
+            <div id="analytics-category-chart">
+              <div class="skeleton" style="height: 200px; border-radius: var(--radius-md);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Secondary Sections: Most Worn vs Least Worn -->
+        <div class="analytics-sections">
+          <div class="card analytics-card">
+            <div class="section-header">
+              <div>
+                <h3 class="section-title">Most Worn Staples</h3>
+                <p class="section-subtitle">Your highest rotation essentials</p>
+              </div>
+              <span class="badge badge-olive">High Value</span>
+            </div>
+            <div id="analytics-most-worn-list">
+              <div class="skeleton" style="height: 160px; border-radius: var(--radius-md);"></div>
+            </div>
+          </div>
+
+          <div class="card analytics-card">
+            <div class="section-header">
+              <div>
+                <h3 class="section-title">Neglected Assets</h3>
+                <p class="section-subtitle">Pieces eligible for styling revival or resale</p>
+              </div>
+              <span class="badge badge-rose">Opportunity</span>
+            </div>
+            <div id="analytics-least-worn-list">
+              <div class="skeleton" style="height: 160px; border-radius: var(--radius-md);"></div>
             </div>
           </div>
         </div>
@@ -275,7 +289,7 @@
   <script src="js/api.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/toast.js"></script>
-  <script src="js/pages/dashboard.js"></script>
+  <script src="js/pages/analytics.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

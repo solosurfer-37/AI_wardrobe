@@ -8,7 +8,41 @@ const OutfitsPage = {
   recommendations: null,
   isLoading: false,
 
+  init() {
+    const container = document.getElementById('page-container');
+    // If static HTML isn't already present in container, render it
+    if (container && !document.getElementById('outfit-results-container')) {
+      this.render(container);
+      return;
+    }
+
+    // Load saved coordinates from localStorage if available
+    const savedLat = parseFloat(localStorage.getItem('wardrobe_lat'));
+    const savedLon = parseFloat(localStorage.getItem('wardrobe_lon'));
+    if (!isNaN(savedLat)) this.latitude = savedLat;
+    if (!isNaN(savedLon)) this.longitude = savedLon;
+
+    const latInput = document.getElementById('outfit-lat');
+    const lonInput = document.getElementById('outfit-lon');
+    if (latInput) latInput.value = this.latitude;
+    if (lonInput) lonInput.value = this.longitude;
+
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+
+    this.bindEvents();
+    // Automatically trigger recommendations on initial load
+    this.generateRecommendations();
+  },
+
   async render(container) {
+    // Load saved coordinates from localStorage if available
+    const savedLat = parseFloat(localStorage.getItem('wardrobe_lat'));
+    const savedLon = parseFloat(localStorage.getItem('wardrobe_lon'));
+    if (!isNaN(savedLat)) this.latitude = savedLat;
+    if (!isNaN(savedLon)) this.longitude = savedLon;
+
     container.innerHTML = `
       <div class="outfits-page animate-fade-in">
         <!-- Hero Generator Banner -->
@@ -67,13 +101,13 @@ const OutfitsPage = {
     if (window.lucide) lucide.createIcons();
 
     this.bindEvents();
-    // Automatically trigger recommendations on first load
     this.generateRecommendations();
   },
 
   bindEvents() {
     const generateBtn = document.getElementById('btn-generate-outfits');
-    if (generateBtn) {
+    if (generateBtn && !generateBtn._hasHandler) {
+      generateBtn._hasHandler = true;
       generateBtn.addEventListener('click', () => {
         const latInput = document.getElementById('outfit-lat');
         const lonInput = document.getElementById('outfit-lon');
@@ -84,7 +118,8 @@ const OutfitsPage = {
     }
 
     const geoBtn = document.getElementById('btn-use-location');
-    if (geoBtn) {
+    if (geoBtn && !geoBtn._hasHandler) {
+      geoBtn._hasHandler = true;
       geoBtn.addEventListener('click', () => {
         if (!navigator.geolocation) {
           Toast.warning('Geolocation Unavailable', 'Your browser does not support geolocation detection.');
@@ -150,11 +185,15 @@ const OutfitsPage = {
           <i data-lucide="alert-circle" class="empty-icon" style="color: var(--color-error);"></i>
           <h4>Unable to Generate Outfits</h4>
           <p>${Utils.escapeHTML(err.message)}</p>
-          <button class="btn btn-primary btn-sm" onclick="OutfitsPage.generateRecommendations()" style="margin-top: var(--space-4);">
+          <button class="btn btn-primary btn-sm" id="btn-retry-outfits" style="margin-top: var(--space-4);">
             <i data-lucide="rotate-cw"></i> Try Again
           </button>
         </div>
       `;
+      const retryBtn = document.getElementById('btn-retry-outfits');
+      if (retryBtn) {
+        retryBtn.addEventListener('click', () => OutfitsPage.generateRecommendations());
+      }
       if (window.lucide) lucide.createIcons();
     } finally {
       if (generateBtn) {
@@ -175,7 +214,7 @@ const OutfitsPage = {
           <i data-lucide="hanger" class="empty-icon"></i>
           <h4>Not Enough Items for Outfits</h4>
           <p>The AI needs at least one top, one bottom, and one footwear item to construct valid outfits.</p>
-          <a href="#wardrobe" class="btn btn-primary btn-sm" style="margin-top: var(--space-4);">
+          <a href="wardrobe.html" class="btn btn-primary btn-sm" style="margin-top: var(--space-4);">
             <i data-lucide="plus"></i> Add Items to Wardrobe
           </a>
         </div>
@@ -199,7 +238,7 @@ const OutfitsPage = {
     `;
 
     // Add click listeners to items
-    this.recommendations.forEach((outfit, idx) => {
+    this.recommendations.forEach((outfit) => {
       const items = [outfit.top, outfit.bottom, outfit.footwear, outfit.outerwear].filter(Boolean);
       items.forEach(item => {
         const itemEls = container.querySelectorAll(`[data-outfit-item-id="${item.id}"]`);

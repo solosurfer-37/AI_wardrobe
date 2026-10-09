@@ -3,6 +3,22 @@
    ═══════════════════════════════════════════════════════ */
 
 const DashboardPage = {
+  init() {
+    const container = document.getElementById('page-container');
+    // If static HTML isn't already present in container, render it
+    if (container && !document.getElementById('dashboard-stats-grid')) {
+      this.render(container);
+      return;
+    }
+
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+
+    // Load data from backend API
+    this.loadDashboardData();
+  },
+
   async render(container) {
     container.innerHTML = `
       <div class="dashboard-page animate-fade-in">
@@ -15,11 +31,11 @@ const DashboardPage = {
               Maximize your closet's potential with AI-driven weather styling, rotation tracking, and cost-per-wear analytics.
             </p>
             <div class="welcome-actions">
-              <a href="#outfits" class="btn btn-generate">
+              <a href="outfits.html" class="btn btn-generate">
                 <i data-lucide="sparkles"></i>
                 Generate Today's Outfit
               </a>
-              <a href="#wardrobe" class="btn btn-wardrobe-link">
+              <a href="wardrobe.html" class="btn btn-wardrobe-link">
                 <i data-lucide="shirt"></i>
                 View Wardrobe
               </a>
@@ -41,7 +57,7 @@ const DashboardPage = {
                 <h3 class="section-title">Underutilized Pieces</h3>
                 <p class="section-subtitle">Items ready for more wear in your rotation</p>
               </div>
-              <a href="#wardrobe" class="btn btn-ghost btn-sm">View All</a>
+              <a href="wardrobe.html" class="btn btn-ghost btn-sm">View All</a>
             </div>
             <div id="dashboard-least-worn-list">
               <div class="skeleton" style="height: 180px; border-radius: var(--radius-md);"></div>
@@ -233,7 +249,7 @@ const DashboardPage = {
         </div>
 
         <div style="padding-top: var(--space-2); text-align: center;">
-          <a href="#outfits" class="btn btn-outline btn-sm" style="width: 100%;">
+          <a href="outfits.html" class="btn btn-outline btn-sm" style="width: 100%;">
             <i data-lucide="sparkles"></i>
             Run Outfit Recommendation Engine
           </a>

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="AI Wardrobe — Your intelligent digital closet and outfit recommendation platform. Maximize wardrobe utilization with smart styling." />
-  <title>Dashboard — AI Wardrobe</title>
+  <meta name="description" content="AI Wardrobe — Browse, search, filter, and organize your clothing collection." />
+  <title>My Wardrobe — AI Wardrobe</title>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -27,7 +27,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
 </head>
-<body data-page="dashboard">
+<body data-page="wardrobe">
   <!-- Mobile Overlay -->
   <div class="mobile-overlay" id="mobile-overlay"></div>
 
@@ -49,11 +49,11 @@
     </div>
 
     <nav class="sidebar-nav" id="sidebar-nav">
-      <a href="index.html" class="nav-item active" data-page="dashboard" id="nav-dashboard">
+      <a href="index.html" class="nav-item" data-page="dashboard" id="nav-dashboard">
         <i data-lucide="layout-dashboard"></i>
         <span>Dashboard</span>
       </a>
-      <a href="wardrobe.html" class="nav-item" data-page="wardrobe" id="nav-wardrobe">
+      <a href="wardrobe.html" class="nav-item active" data-page="wardrobe" id="nav-wardrobe">
         <i data-lucide="shirt"></i>
         <span>My Wardrobe</span>
       </a>
@@ -89,7 +89,7 @@
       <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
         <i data-lucide="menu"></i>
       </button>
-      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-title" id="topbar-title">My Wardrobe</div>
       <div class="topbar-actions">
         <button class="topbar-btn" id="btn-add-clothing-topbar" title="Add Clothing">
           <i data-lucide="plus"></i>
@@ -99,64 +99,72 @@
 
     <!-- Page Container -->
     <div class="page-container" id="page-container">
-      <div class="dashboard-page animate-fade-in">
-        <!-- Hero Banner -->
-        <section class="dashboard-welcome">
-          <div class="welcome-content">
-            <span class="welcome-eyebrow">Smart Wardrobe Intelligence</span>
-            <h1 class="welcome-title">Curated Style, Smarter Rotation</h1>
-            <p class="welcome-subtitle">
-              Maximize your closet's potential with AI-driven weather styling, rotation tracking, and cost-per-wear analytics.
-            </p>
-            <div class="welcome-actions">
-              <a href="outfits.html" class="btn btn-generate">
-                <i data-lucide="sparkles"></i>
-                Generate Today's Outfit
-              </a>
-              <a href="wardrobe.html" class="btn btn-wardrobe-link">
-                <i data-lucide="shirt"></i>
-                View Wardrobe
-              </a>
-            </div>
+      <div class="wardrobe-page animate-fade-in">
+        <!-- Top Toolbar & Controls -->
+        <div class="wardrobe-toolbar">
+          <div class="search-container">
+            <i data-lucide="search" class="search-icon"></i>
+            <input 
+              type="text" 
+              id="wardrobe-search-input" 
+              class="search-input" 
+              placeholder="Search by type, color, or pattern..." 
+            />
           </div>
-        </section>
 
-        <!-- Stats Grid (Loading Skeleton) -->
-        <div class="dashboard-stats" id="dashboard-stats-grid">
-          <div class="skeleton skeleton-card"></div>
-          <div class="skeleton skeleton-card"></div>
-          <div class="skeleton skeleton-card"></div>
-          <div class="skeleton skeleton-card"></div>
+          <div class="filter-bar">
+            <button class="filter-pill active" data-category="all">All</button>
+            <button class="filter-pill" data-category="tops">Tops</button>
+            <button class="filter-pill" data-category="bottoms">Bottoms</button>
+            <button class="filter-pill" data-category="outerwear">Outerwear</button>
+            <button class="filter-pill" data-category="footwear">Footwear</button>
+          </div>
+
+          <div style="display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap;">
+            <select id="wardrobe-color-filter" class="select-input" style="height: 40px; padding: 0 var(--space-3); border-radius: var(--radius-md); border: 1px solid var(--border-medium); background: var(--bg-card); font-size: var(--text-sm);">
+              <option value="all">All Colors</option>
+              <option value="white">White</option>
+              <option value="black">Black</option>
+              <option value="blue">Blue</option>
+              <option value="red">Red</option>
+              <option value="green">Green</option>
+              <option value="navy">Navy</option>
+              <option value="gray">Gray</option>
+              <option value="brown">Brown</option>
+              <option value="beige">Beige</option>
+              <option value="pink">Pink</option>
+              <option value="yellow">Yellow</option>
+              <option value="orange">Orange</option>
+              <option value="purple">Purple</option>
+            </select>
+
+            <select id="wardrobe-sort" class="select-input" style="height: 40px; padding: 0 var(--space-3); border-radius: var(--radius-md); border: 1px solid var(--border-medium); background: var(--bg-card); font-size: var(--text-sm);">
+              <option value="least-worn" selected>Least Worn First</option>
+              <option value="most-worn">Most Worn First</option>
+              <option value="type-asc">Type (A - Z)</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="price-asc">Price: Low to High</option>
+            </select>
+
+            <button class="btn btn-primary" id="btn-open-add-clothing" style="height: 40px;">
+              <i data-lucide="plus"></i>
+              Add Item
+            </button>
+          </div>
         </div>
 
-        <!-- Two-Column Sections -->
-        <div class="dashboard-sections">
-          <!-- Underutilized Items -->
-          <div class="card dashboard-section-card">
-            <div class="section-header">
-              <div>
-                <h3 class="section-title">Underutilized Pieces</h3>
-                <p class="section-subtitle">Items ready for more wear in your rotation</p>
-              </div>
-              <a href="wardrobe.html" class="btn btn-ghost btn-sm">View All</a>
-            </div>
-            <div id="dashboard-least-worn-list">
-              <div class="skeleton" style="height: 180px; border-radius: var(--radius-md);"></div>
-            </div>
-          </div>
+        <div class="wardrobe-count" id="wardrobe-items-count">Loading items...</div>
 
-          <!-- Schedule & Smart Context -->
-          <div class="card dashboard-section-card">
-            <div class="section-header">
-              <div>
-                <h3 class="section-title">Today's Schedule & Climate</h3>
-                <p class="section-subtitle">Context-aware styling recommendations</p>
-              </div>
-            </div>
-            <div id="dashboard-context-content">
-              <div class="skeleton" style="height: 180px; border-radius: var(--radius-md);"></div>
-            </div>
-          </div>
+        <!-- Clothing Grid -->
+        <div class="wardrobe-grid" id="wardrobe-items-grid">
+          <div class="skeleton clothing-card"></div>
+          <div class="skeleton clothing-card"></div>
+          <div class="skeleton clothing-card"></div>
+          <div class="skeleton clothing-card"></div>
+          <div class="skeleton clothing-card"></div>
+          <div class="skeleton clothing-card"></div>
+          <div class="skeleton clothing-card"></div>
+          <div class="skeleton clothing-card"></div>
         </div>
       </div>
     </div>
@@ -275,7 +283,7 @@
   <script src="js/api.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/toast.js"></script>
-  <script src="js/pages/dashboard.js"></script>
+  <script src="js/pages/wardrobe.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

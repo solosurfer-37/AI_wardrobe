@@ -3,6 +3,21 @@
    ═══════════════════════════════════════════════════════ */
 
 const AnalyticsPage = {
+  init() {
+    const container = document.getElementById('page-container');
+    // If static HTML isn't already present in container, render it
+    if (container && !document.getElementById('analytics-stats-grid')) {
+      this.render(container);
+      return;
+    }
+
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+
+    this.loadAnalyticsData();
+  },
+
   async render(container) {
     container.innerHTML = `
       <div class="analytics-page animate-fade-in">

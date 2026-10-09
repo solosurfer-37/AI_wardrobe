@@ -3,6 +3,34 @@
    ═══════════════════════════════════════════════════════ */
 
 const SettingsPage = {
+  init() {
+    const container = document.getElementById('page-container');
+    // If static HTML isn't already present in container, render it
+    if (container && !document.getElementById('settings-api-url')) {
+      this.render(container);
+      return;
+    }
+
+    // Populate form with saved or default settings
+    const savedApiUrl = localStorage.getItem('wardrobe_api_url') || CONFIG.API_BASE_URL;
+    const savedLat = localStorage.getItem('wardrobe_lat') || CONFIG.DEFAULT_LATITUDE;
+    const savedLon = localStorage.getItem('wardrobe_lon') || CONFIG.DEFAULT_LONGITUDE;
+
+    const apiInput = document.getElementById('settings-api-url');
+    const latInput = document.getElementById('settings-lat');
+    const lonInput = document.getElementById('settings-lon');
+
+    if (apiInput) apiInput.value = savedApiUrl;
+    if (latInput) latInput.value = savedLat;
+    if (lonInput) lonInput.value = savedLon;
+
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+
+    this.bindEvents();
+  },
+
   render(container) {
     const savedApiUrl = localStorage.getItem('wardrobe_api_url') || CONFIG.API_BASE_URL;
     const savedLat = localStorage.getItem('wardrobe_lat') || CONFIG.DEFAULT_LATITUDE;
@@ -115,7 +143,8 @@ const SettingsPage = {
 
   bindEvents() {
     const saveBtn = document.getElementById('btn-save-settings');
-    if (saveBtn) {
+    if (saveBtn && !saveBtn._hasHandler) {
+      saveBtn._hasHandler = true;
       saveBtn.addEventListener('click', () => {
         const apiUrl = document.getElementById('settings-api-url').value.trim();
         const lat = document.getElementById('settings-lat').value.trim();
@@ -130,7 +159,8 @@ const SettingsPage = {
     }
 
     const testBtn = document.getElementById('btn-test-connection');
-    if (testBtn) {
+    if (testBtn && !testBtn._hasHandler) {
+      testBtn._hasHandler = true;
       testBtn.addEventListener('click', async () => {
         const statusEl = document.getElementById('connection-status-message');
         testBtn.disabled = true;
@@ -147,13 +177,14 @@ const SettingsPage = {
           `;
           Toast.success('Connected', 'Successfully communicated with Spring Boot API.');
         } catch (err) {
+          const currentUrl = localStorage.getItem('wardrobe_api_url') || CONFIG.API_BASE_URL;
           statusEl.innerHTML = `
             <div class="badge badge-rose" style="padding: var(--space-2) var(--space-3); width: fit-content;">
               <i data-lucide="alert-circle" style="width: 14px; height: 14px; margin-right: 4px;"></i>
               Connection Failed: ${Utils.escapeHTML(err.message)}
             </div>
           `;
-          Toast.error('Connection Failed', 'Could not reach backend at ' + CONFIG.API_BASE_URL);
+          Toast.error('Connection Failed', 'Could not reach backend at ' + currentUrl);
         } finally {
           testBtn.disabled = false;
           testBtn.innerHTML = `<i data-lucide="activity"></i> Test API`;

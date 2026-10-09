@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="AI Wardrobe — Your intelligent digital closet and outfit recommendation platform. Maximize wardrobe utilization with smart styling." />
-  <title>Dashboard — AI Wardrobe</title>
+  <meta name="description" content="AI Wardrobe — Intelligent outfit combinations customized for weather, color harmony, and rotation." />
+  <title>Outfit Generator — AI Wardrobe</title>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -27,7 +27,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
 </head>
-<body data-page="dashboard">
+<body data-page="outfits">
   <!-- Mobile Overlay -->
   <div class="mobile-overlay" id="mobile-overlay"></div>
 
@@ -49,7 +49,7 @@
     </div>
 
     <nav class="sidebar-nav" id="sidebar-nav">
-      <a href="index.html" class="nav-item active" data-page="dashboard" id="nav-dashboard">
+      <a href="index.html" class="nav-item" data-page="dashboard" id="nav-dashboard">
         <i data-lucide="layout-dashboard"></i>
         <span>Dashboard</span>
       </a>
@@ -57,7 +57,7 @@
         <i data-lucide="shirt"></i>
         <span>My Wardrobe</span>
       </a>
-      <a href="outfits.html" class="nav-item" data-page="outfits" id="nav-outfits">
+      <a href="outfits.html" class="nav-item active" data-page="outfits" id="nav-outfits">
         <i data-lucide="sparkles"></i>
         <span>Outfit Generator</span>
       </a>
@@ -89,7 +89,7 @@
       <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
         <i data-lucide="menu"></i>
       </button>
-      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-title" id="topbar-title">Outfit Generator</div>
       <div class="topbar-actions">
         <button class="topbar-btn" id="btn-add-clothing-topbar" title="Add Clothing">
           <i data-lucide="plus"></i>
@@ -99,63 +99,65 @@
 
     <!-- Page Container -->
     <div class="page-container" id="page-container">
-      <div class="dashboard-page animate-fade-in">
-        <!-- Hero Banner -->
-        <section class="dashboard-welcome">
-          <div class="welcome-content">
-            <span class="welcome-eyebrow">Smart Wardrobe Intelligence</span>
-            <h1 class="welcome-title">Curated Style, Smarter Rotation</h1>
-            <p class="welcome-subtitle">
-              Maximize your closet's potential with AI-driven weather styling, rotation tracking, and cost-per-wear analytics.
-            </p>
-            <div class="welcome-actions">
-              <a href="outfits.html" class="btn btn-generate">
-                <i data-lucide="sparkles"></i>
-                Generate Today's Outfit
-              </a>
-              <a href="wardrobe.html" class="btn btn-wardrobe-link">
-                <i data-lucide="shirt"></i>
-                View Wardrobe
-              </a>
+      <div class="outfits-page animate-fade-in">
+        <!-- Hero Generator Banner -->
+        <section class="outfit-hero">
+          <div class="outfit-hero-content">
+            <div class="outfit-hero-icon">
+              <i data-lucide="sparkles"></i>
             </div>
+            <h2>Smart Outfit Generator</h2>
+            <p>
+              Weather-aware, color-harmonized outfit combinations configured to rotate your least-worn clothes.
+            </p>
+
+            <!-- Coordinate Controls -->
+            <div style="display: flex; gap: var(--space-3); justify-content: center; align-items: center; max-width: 520px; margin: 0 auto var(--space-6); flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: var(--space-2); background: var(--bg-card); padding: var(--space-2) var(--space-4); border-radius: var(--radius-lg); border: 1px solid var(--border-medium);">
+                <i data-lucide="map-pin" style="width: 16px; height: 16px; color: var(--color-olive);"></i>
+                <input 
+                  type="number" 
+                  id="outfit-lat" 
+                  step="0.0001" 
+                  placeholder="Lat" 
+                  value="28.6139" 
+                  style="width: 80px; border: none; background: transparent; font-size: var(--text-sm); font-weight: var(--weight-medium);" 
+                />
+                <span style="color: var(--border-dark);">,</span>
+                <input 
+                  type="number" 
+                  id="outfit-lon" 
+                  step="0.0001" 
+                  placeholder="Lon" 
+                  value="77.2090" 
+                  style="width: 80px; border: none; background: transparent; font-size: var(--text-sm); font-weight: var(--weight-medium);" 
+                />
+              </div>
+
+              <button class="btn btn-secondary btn-sm" id="btn-use-location" title="Detect GPS Location">
+                <i data-lucide="crosshair"></i> Current GPS
+              </button>
+            </div>
+
+            <button class="btn btn-generate" id="btn-generate-outfits">
+              <i data-lucide="sparkles"></i>
+              Generate Recommendations
+            </button>
           </div>
         </section>
 
-        <!-- Stats Grid (Loading Skeleton) -->
-        <div class="dashboard-stats" id="dashboard-stats-grid">
-          <div class="skeleton skeleton-card"></div>
-          <div class="skeleton skeleton-card"></div>
-          <div class="skeleton skeleton-card"></div>
-          <div class="skeleton skeleton-card"></div>
-        </div>
-
-        <!-- Two-Column Sections -->
-        <div class="dashboard-sections">
-          <!-- Underutilized Items -->
-          <div class="card dashboard-section-card">
-            <div class="section-header">
-              <div>
-                <h3 class="section-title">Underutilized Pieces</h3>
-                <p class="section-subtitle">Items ready for more wear in your rotation</p>
-              </div>
-              <a href="wardrobe.html" class="btn btn-ghost btn-sm">View All</a>
-            </div>
-            <div id="dashboard-least-worn-list">
-              <div class="skeleton" style="height: 180px; border-radius: var(--radius-md);"></div>
+        <!-- Results Section -->
+        <div class="outfit-results" id="outfit-results-container">
+          <div class="outfit-results-header">
+            <div>
+              <h3>Consulting Style Engine...</h3>
+              <p class="section-subtitle">Querying weather forecasts, checking wear history, & matching color charts</p>
             </div>
           </div>
-
-          <!-- Schedule & Smart Context -->
-          <div class="card dashboard-section-card">
-            <div class="section-header">
-              <div>
-                <h3 class="section-title">Today's Schedule & Climate</h3>
-                <p class="section-subtitle">Context-aware styling recommendations</p>
-              </div>
-            </div>
-            <div id="dashboard-context-content">
-              <div class="skeleton" style="height: 180px; border-radius: var(--radius-md);"></div>
-            </div>
+          <div class="outfit-skeleton-grid">
+            <div class="skeleton outfit-skeleton-card"></div>
+            <div class="skeleton outfit-skeleton-card"></div>
+            <div class="skeleton outfit-skeleton-card"></div>
           </div>
         </div>
       </div>
@@ -275,7 +277,7 @@
   <script src="js/api.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/toast.js"></script>
-  <script src="js/pages/dashboard.js"></script>
+  <script src="js/pages/outfits.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
