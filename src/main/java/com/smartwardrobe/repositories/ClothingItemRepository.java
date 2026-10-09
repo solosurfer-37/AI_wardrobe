@@ -14,4 +14,6 @@ public interface ClothingItemRepository extends JpaRepository<ClothingItem, Long
     List<ClothingItem> findByType(String type);
 
     List<ClothingItem> findByColor(String color);
+
+    List<ClothingItem> findAllByOrderByWearCountAsc();
 }
