@@ -1,340 +1,206 @@
 /* ═══════════════════════════════════════════════════════
-   AI Wardrobe — API Service Layer
-   Centralized client connecting to Spring Boot backend (/api/...)
-   with automatic local storage fallback containing full dummy dataset
+   AI Wardrobe — API Service Layer (Supabase)
+   Same method names as before, so pages need no change.
+   Needs: window.sb (supabase client, from auth.js)
    ═══════════════════════════════════════════════════════ */
 
-const LocalStore = {
-  STORAGE_KEY: 'ai_wardrobe_items',
+const DB = {
+  _uid: null,
 
-  getItems() {
-    const raw = localStorage.getItem(this.STORAGE_KEY);
-    if (!raw) {
-      const initial = (typeof DUMMY_DATA !== 'undefined' && DUMMY_DATA.clothes) ? [...DUMMY_DATA.clothes] : [];
-      this.saveItems(initial);
-      return initial;
-    }
-    try {
-      return JSON.parse(raw);
-    } catch {
-      return (typeof DUMMY_DATA !== 'undefined' && DUMMY_DATA.clothes) ? [...DUMMY_DATA.clothes] : [];
-    }
+  /** logged-in user ka users.id (bigint) */
+  async userId() {
+    if (this._uid) return this._uid;
+    const { data: { user } } = await sb.auth.getUser();
+    if (!user) throw new Error('Not logged in');
+    const { data, error } = await sb
+      .from('users').select('id').eq('auth_user_id', user.id).single();
+    if (error) throw new Error('User profile not found: ' + error.message);
+    this._uid = data.id;
+    return this._uid;
   },
 
-  saveItems(items) {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(items));
-  },
-
-  addItem(item) {
-    const items = this.getItems();
-    const newItem = {
-      ...item,
-      id: Date.now(),
-      wearCount: item.wearCount || 0,
-      lastWornDate: item.lastWornDate || null,
-      price: item.price != null ? Number(item.price) : 0,
+  /** DB row -> frontend shape (camelCase) */
+  toItem(r) {
+    return {
+      id: r.id,
+      type: r.type || r.category || '',
+      color: r.color || '',
+      pattern: r.pattern || 'solid',
+      imageUrl: r.image_url || '',
+      price: Number(r.price) || 0,
+      wearCount: r.wear_count || 0,
+      lastWornDate: r.last_worn_date || null,
+      name: r.name || '',
+      brand: r.brand || '',
+      season: r.season || '',
+      occasion: r.occasion || '',
+      rating: r.rating,
     };
-    items.unshift(newItem);
-    this.saveItems(items);
-    return newItem;
   },
 
-  getStats() {
-    const items = this.getItems();
+  /** frontend shape -> DB row */
+  toRow(i) {
+    const row = {};
+    if (i.type !== undefined) row.type = i.type;
+    if (i.color !== undefined) row.color = i.color;
+    if (i.pattern !== undefined) row.pattern = i.pattern;
+    if (i.imageUrl !== undefined) row.image_url = i.imageUrl;
+    if (i.price !== undefined) row.price = Number(i.price) || 0;
+    if (i.wearCount !== undefined) row.wear_count = i.wearCount;
+    if (i.lastWornDate !== undefined) row.last_worn_date = i.lastWornDate;
+    if (i.name !== undefined) row.name = i.name;
+    return row;
+  },
+};
+
+/* ── Pure logic (pehle LocalStore me tha), ab items array pe chalta hai ── */
+const Logic = {
+  stats(items) {
     if (!items.length) {
       return { totalItems: 0, utilizationRate: 0, averageCostPerWear: 0, mostWorn: [], leastWorn: [] };
     }
-    const thirtyDaysAgo = Date.now() - 30 * 86400000;
-    const activeItems = items.filter(i => i.lastWornDate && new Date(i.lastWornDate).getTime() >= thirtyDaysAgo);
-    const utilizationRate = (activeItems.length / items.length) * 100;
-    const totalCost = items.reduce((sum, i) => sum + (Number(i.price) || 0), 0);
-    const totalWears = items.reduce((sum, i) => sum + (Number(i.wearCount) || 0), 0);
-    const avgCpw = totalWears > 0 ? totalCost / totalWears : totalCost;
-
-    const sortedMost = [...items].sort((a, b) => (b.wearCount || 0) - (a.wearCount || 0));
-    const sortedLeast = [...items].sort((a, b) => (a.wearCount || 0) - (b.wearCount || 0));
-
+    const cutoff = Date.now() - 30 * 86400000;
+    const active = items.filter(i => i.lastWornDate && new Date(i.lastWornDate).getTime() >= cutoff);
+    const totalCost = items.reduce((s, i) => s + (Number(i.price) || 0), 0);
+    const totalWears = items.reduce((s, i) => s + (Number(i.wearCount) || 0), 0);
     return {
       totalItems: items.length,
-      utilizationRate,
-      averageCostPerWear: avgCpw,
-      mostWorn: sortedMost.slice(0, 3),
-      leastWorn: sortedLeast.slice(0, 3),
+      utilizationRate: (active.length / items.length) * 100,
+      averageCostPerWear: totalWears > 0 ? totalCost / totalWears : totalCost,
+      mostWorn: [...items].sort((a, b) => b.wearCount - a.wearCount).slice(0, 3),
+      leastWorn: [...items].sort((a, b) => a.wearCount - b.wearCount).slice(0, 3),
     };
   },
 
-  getRecommendations() {
-    const items = this.getItems();
-    const topsGroup = ['shirt', 't-shirt', 'blouse', 'top'];
-    const bottomsGroup = ['pants', 'jeans', 'shorts', 'skirt', 'trousers'];
-    const footwearGroup = ['shoes', 'sneakers', 'boots', 'sandals', 'loafers'];
-    const outerwearGroup = ['jacket', 'sweater', 'hoodie'];
-
-    const clashingPairs = [
-      ['red', 'green'], ['red', 'orange'], ['red', 'pink'],
-      ['orange', 'pink'], ['brown', 'black'], ['navy', 'black'],
-      ['green', 'orange'], ['purple', 'red'], ['yellow', 'green'],
-      ['brown', 'gray']
-    ];
-
-    const isClashing = (c1, c2) => {
-      const a = (c1 || '').toLowerCase().trim();
-      const b = (c2 || '').toLowerCase().trim();
-      return clashingPairs.some(([p1, p2]) => (a === p1 && b === p2) || (a === p2 && b === p1));
+  recommend(items) {
+    const G = {
+      tops: ['shirt', 't-shirt', 'blouse', 'top'],
+      bottoms: ['pants', 'jeans', 'shorts', 'skirt', 'trousers'],
+      shoes: ['shoes', 'sneakers', 'boots', 'sandals', 'loafers'],
+      outer: ['jacket', 'sweater', 'hoodie'],
     };
+    const clash = [
+      ['red', 'green'], ['red', 'orange'], ['red', 'pink'], ['orange', 'pink'],
+      ['brown', 'black'], ['navy', 'black'], ['green', 'orange'], ['purple', 'red'],
+      ['yellow', 'green'], ['brown', 'gray'],
+    ];
+    const isClash = (c1, c2) => {
+      const a = (c1 || '').toLowerCase().trim(), b = (c2 || '').toLowerCase().trim();
+      return clash.some(([x, y]) => (a === x && b === y) || (a === y && b === x));
+    };
+    const limit = Date.now() - 2 * 86400000;
+    const ok = i => !i.lastWornDate || new Date(i.lastWornDate).getTime() < limit;
+    const pick = g => items.filter(i => G[g].includes((i.type || '').toLowerCase()) && ok(i));
 
-    const twoDaysAgo = Date.now() - 2 * 86400000;
-    const isEligible = (item) => !item.lastWornDate || new Date(item.lastWornDate).getTime() < twoDaysAgo;
-
-    const tops = items.filter(i => topsGroup.includes((i.type || '').toLowerCase()) && isEligible(i));
-    const bottoms = items.filter(i => bottomsGroup.includes((i.type || '').toLowerCase()) && isEligible(i));
-    const shoes = items.filter(i => footwearGroup.includes((i.type || '').toLowerCase()) && isEligible(i));
-    const outers = items.filter(i => outerwearGroup.includes((i.type || '').toLowerCase()) && isEligible(i));
-
+    const tops = pick('tops'), bottoms = pick('bottoms'), shoes = pick('shoes'), outers = pick('outer');
     const combos = [];
-    for (const t of tops) {
-      for (const b of bottoms) {
-        for (const s of shoes) {
-          if (!isClashing(t.color, b.color) && !isClashing(t.color, s.color) && !isClashing(b.color, s.color)) {
-            // Find optional outerwear
-            const out = outers.find(o => !isClashing(o.color, t.color) && !isClashing(o.color, b.color) && !isClashing(o.color, s.color));
-            const totalWear = (t.wearCount || 0) + (b.wearCount || 0) + (s.wearCount || 0) + (out ? (out.wearCount || 0) : 0);
-            combos.push({
-              top: t,
-              bottom: b,
-              footwear: s,
-              outerwear: out || null,
-              totalWearCount: totalWear,
-            });
-          }
-        }
-      }
+    for (const t of tops) for (const b of bottoms) for (const s of shoes) {
+      if (isClash(t.color, b.color) || isClash(t.color, s.color) || isClash(b.color, s.color)) continue;
+      const out = outers.find(o => !isClash(o.color, t.color) && !isClash(o.color, b.color) && !isClash(o.color, s.color));
+      combos.push({
+        top: t, bottom: b, footwear: s, outerwear: out || null,
+        totalWearCount: t.wearCount + b.wearCount + s.wearCount + (out ? out.wearCount : 0),
+      });
     }
-
-    combos.sort((a, b) => a.totalWearCount - b.totalWearCount);
-    return combos.slice(0, 3);
-  }
+    return combos.sort((a, b) => a.totalWearCount - b.totalWearCount).slice(0, 3);
+  },
 };
 
 const API = {
-  /**
-   * Generic request wrapper with error handling and fallback to LocalStore.
-   * @param {string} endpoint  - relative path (e.g. '/api/clothes')
-   * @param {object} options   - fetch options
-   * @returns {Promise<any>}
-   */
-  async request(endpoint, options = {}) {
-    const baseUrl = localStorage.getItem('wardrobe_api_url') || CONFIG.API_BASE_URL;
-    const url = `${baseUrl}${endpoint}`;
-    const defaultHeaders = { 'Content-Type': 'application/json' };
-
-    try {
-      const response = await fetch(url, {
-        ...options,
-        headers: { ...defaultHeaders, ...options.headers },
-      });
-
-      if (!response.ok) {
-        let errorBody;
-        try {
-          errorBody = await response.json();
-        } catch {
-          errorBody = { message: response.statusText };
-        }
-        const error = new Error(errorBody.message || `Request failed with status ${response.status}`);
-        error.status = response.status;
-        error.body = errorBody;
-        throw error;
-      }
-
-      // Handle empty responses (204 No Content)
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        return await response.json();
-      }
-      return null;
-    } catch (error) {
-      // Re-throw explicit HTTP error responses from server
-      if (error.status && error.status !== 0) throw error;
-
-      // For network errors (backend not running), flag fallback
-      const netError = new Error('Backend not reachable at ' + baseUrl);
-      netError.isNetworkError = true;
-      throw netError;
-    }
-  },
-
   // ═══════ Clothing Items ═══════
-
-  /**
-   * GET /api/clothes — Retrieve all clothing items
-   */
   async getAllClothes() {
-    try {
-      return await this.request('/api/clothes');
-    } catch (err) {
-      if (err.isNetworkError) {
-        return LocalStore.getItems();
-      }
-      throw err;
-    }
+    const uid = await DB.userId();
+    const { data, error } = await sb
+      .from('clothing_items').select('*').eq('user_id', uid).order('id', { ascending: false });
+    if (error) throw new Error(error.message);
+    return data.map(DB.toItem);
   },
 
   /**
-   * POST /api/clothes — Create a new clothing item
-   * @param {object} clothingItem - { type, color, pattern?, imageUrl?, price? }
+   * Item add karta hai. File di ho to:
+   *   1) pehle image upload (fail hui -> item save hi nahi hoga)
+   *   2) fir insert (fail hua -> uploaded image delete / rollback)
+   * Bucket "clothes" (public) chahiye.
    */
-  async addClothingItem(clothingItem) {
-    try {
-      return await this.request('/api/clothes', {
-        method: 'POST',
-        body: JSON.stringify(clothingItem),
-      });
-    } catch (err) {
-      if (err.isNetworkError) {
-        return LocalStore.addItem(clothingItem);
-      }
-      throw err;
+  async addClothingItem(item, file = null) {
+    const uid = await DB.userId();
+    let path = null;
+    let imageUrl = item.imageUrl || '';
+
+    if (file) {
+      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+      path = `${uid}/${Date.now()}.${ext}`;
+      const { error: upErr } = await sb.storage.from('clothes').upload(path, file);
+      if (upErr) throw new Error('Image upload failed: ' + upErr.message);
+      imageUrl = sb.storage.from('clothes').getPublicUrl(path).data.publicUrl;
     }
+
+    const row = { ...DB.toRow({ ...item, imageUrl }), user_id: uid, wear_count: item.wearCount || 0 };
+    const { data, error } = await sb.from('clothing_items').insert(row).select().single();
+
+    if (error) {
+      if (path) await sb.storage.from('clothes').remove([path]); // rollback
+      throw new Error(error.message);
+    }
+    return DB.toItem(data);
   },
 
-  /**
-   * POST /api/clothes/:id/upload-image — Upload a clothing item's image.
-   * Uses FormData so the browser sets the multipart boundary automatically.
-   */
+  /** alias, purane call ke liye */
+  async addClothingItemWithImage(item, file) {
+    return this.addClothingItem(item, file);
+  },
+
+  /** Existing item ki image badalne ke liye */
   async uploadClothingImage(id, file) {
-    const baseUrl = localStorage.getItem('wardrobe_api_url') || CONFIG.API_BASE_URL;
-    const formData = new FormData();
-    // ImageUploadController explicitly expects the multipart field name "file".
-    formData.append('file', file);
-
-    let response;
-    try {
-      response = await fetch(`${baseUrl}/api/clothes/${encodeURIComponent(id)}/upload-image`, {
-        method: 'POST',
-        body: formData,
-      });
-    } catch (error) {
-      const networkError = new Error('Backend not reachable at ' + baseUrl);
-      networkError.isNetworkError = true;
-      throw networkError;
+    const uid = await DB.userId();
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+    const path = `${uid}/${id}-${Date.now()}.${ext}`;
+    const { error } = await sb.storage.from('clothes').upload(path, file, { upsert: true });
+    if (error) throw new Error('Image upload failed: ' + error.message);
+    const { data } = sb.storage.from('clothes').getPublicUrl(path);
+    const { data: row, error: e2 } = await sb
+      .from('clothing_items').update({ image_url: data.publicUrl })
+      .eq('id', id).eq('user_id', uid).select().single();
+    if (e2) {
+      await sb.storage.from('clothes').remove([path]); // rollback
+      throw new Error(e2.message);
     }
-
-    if (!response.ok) {
-      let body = {};
-      try { body = await response.json(); } catch (_) {}
-      throw new Error(body.error || body.message || `Image upload failed (${response.status})`);
-    }
-    const contentType = response.headers.get('content-type') || '';
-    return contentType.includes('application/json') ? response.json() : null;
+    return DB.toItem(row);
   },
 
-  /**
-   * PUT /api/clothes/:id — Update a clothing item
-   */
-  async updateClothingItem(id, clothingItem) {
-    try {
-      return await this.request(`/api/clothes/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify(clothingItem),
-      });
-    } catch (err) {
-      if (err.isNetworkError) {
-        const items = LocalStore.getItems();
-        const idx = items.findIndex(i => String(i.id) === String(id));
-        if (idx !== -1) {
-          items[idx] = { ...items[idx], ...clothingItem };
-          LocalStore.saveItems(items);
-          return items[idx];
-        }
-      }
-      throw err;
-    }
+  async updateClothingItem(id, item) {
+    const uid = await DB.userId();
+    const { data, error } = await sb
+      .from('clothing_items').update(DB.toRow(item)).eq('id', id).eq('user_id', uid).select().single();
+    if (error) throw new Error(error.message);
+    return DB.toItem(data);
   },
 
-  /**
-   * DELETE /api/clothes/:id — Delete a clothing item
-   */
   async deleteClothingItem(id) {
-    try {
-      return await this.request(`/api/clothes/${id}`, {
-        method: 'DELETE',
-      });
-    } catch (err) {
-      if (err.isNetworkError) {
-        const items = LocalStore.getItems().filter(i => String(i.id) !== String(id));
-        LocalStore.saveItems(items);
-        return true;
-      }
-      throw err;
-    }
+    const uid = await DB.userId();
+    const { error } = await sb.from('clothing_items').delete().eq('id', id).eq('user_id', uid);
+    if (error) throw new Error(error.message);
+    return true;
   },
 
-  /**
-   * GET /api/clothes/least-worn — Retrieve items sorted by wearCount ascending
-   */
   async getLeastWornItems() {
-    try {
-      return await this.request('/api/clothes/least-worn');
-    } catch (err) {
-      if (err.isNetworkError) {
-        const items = LocalStore.getItems();
-        return [...items].sort((a, b) => (a.wearCount || 0) - (b.wearCount || 0));
-      }
-      throw err;
-    }
+    const items = await this.getAllClothes();
+    return items.sort((a, b) => a.wearCount - b.wearCount);
   },
 
-  // ═══════ Outfit Recommendations ═══════
-
-  /**
-   * GET /api/outfits/recommend — Get AI outfit recommendations
-   * @param {number} latitude
-   * @param {number} longitude
-   */
+  // ═══════ Outfits ═══════
   async getOutfitRecommendations(latitude, longitude) {
-    const lat = Number.isFinite(Number(latitude)) ? Number(latitude) : CONFIG.DEFAULT_LATITUDE;
-    const lon = Number.isFinite(Number(longitude)) ? Number(longitude) : CONFIG.DEFAULT_LONGITUDE;
-    const params = new URLSearchParams({ latitude: String(lat), longitude: String(lon) });
-    try {
-      return await this.request(`/api/outfits/recommend?${params.toString()}`);
-    } catch (err) {
-      if (err.isNetworkError) {
-        return LocalStore.getRecommendations();
-      }
-      throw err;
-    }
+    // lat/lon abhi use nahi (weather ke liye alag se Open-Meteo laga sakte hain)
+    return Logic.recommend(await this.getAllClothes());
   },
 
   // ═══════ Analytics ═══════
-
-  /**
-   * GET /api/analytics/wardrobe-stats — Get wardrobe statistics
-   */
   async getWardrobeStats() {
-    try {
-      return await this.request('/api/analytics/wardrobe-stats');
-    } catch (err) {
-      if (err.isNetworkError) {
-        return LocalStore.getStats();
-      }
-      throw err;
-    }
+    return Logic.stats(await this.getAllClothes());
   },
 
-  // ═══════ Smart Integrations (Mock endpoints) ═══════
-
-  /**
-   * GET /api/calendar/today-events — Mock calendar integration
-   */
+  // ═══════ Calendar (mock) ═══════
   async getCalendarEvents() {
-    try {
-      return await this.request('/api/calendar/today-events');
-    } catch (err) {
-      if (err.isNetworkError) {
-        return (typeof DUMMY_DATA !== 'undefined' && DUMMY_DATA.calendar) ? DUMMY_DATA.calendar : null;
-      }
-      throw err;
-    }
+    return (typeof DUMMY_DATA !== 'undefined' && DUMMY_DATA.calendar) ? DUMMY_DATA.calendar : null;
   },
 };
