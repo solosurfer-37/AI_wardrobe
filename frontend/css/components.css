@@ -657,27 +657,15 @@ body[data-page="wardrobe"] { background: #e8e8f5; }
   margin: 0;
 }
 
-/* Add-item image upload */
-.clothing-image-upload-area {
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
-  min-height: 125px; padding: 18px; border: 1px dashed var(--border-medium);
-  border-radius: var(--radius-md); background: var(--bg-card); cursor: pointer; text-align: center;
-}
-.clothing-image-upload-area:hover, .clothing-image-upload-area:focus { border-color: var(--color-primary); outline: 2px solid transparent; }
-.clothing-image-upload-area svg { width: 28px; height: 28px; }
-.clothing-image-upload-area small { color: var(--color-beige-dark); }
-.clothing-image-preview-wrap { display: flex; align-items: center; gap: 14px; margin-top: 10px; flex-wrap: wrap; }
-.clothing-image-preview-wrap[hidden], .clothing-image-upload-area[hidden] { display: none !important; }
-.clothing-image-preview-wrap img { width: 110px; height: 110px; object-fit: contain; border: 1px solid var(--border-medium); border-radius: var(--radius-md); background: var(--bg-card); }
-.clothing-image-preview-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-#clothing-image-error { display: block; color: var(--color-error); margin-top: 6px; }
+/* ── Sab pills saaf dikhein (Footwear bhi), aur row me align rahein ── */
+.wardrobe-page .wardrobe-toolbar { align-items: center; }
 
-<<<<<<< HEAD
-/* ── Wardrobe page header ──
-   Do not override .topbar here. The wardrobe page should inherit the same
-   shared topbar styling as the Dashboard, without affecting other pages.
-*/
-=======
+.wardrobe-page .wardrobe-toolbar .filter-bar {
+  overflow: visible;
+  max-width: none;
+  width: auto;
+}
+
 .wardrobe-page .wardrobe-toolbar .filter-pill {
   flex-shrink: 0;
   white-space: nowrap;
@@ -830,4 +818,17 @@ body:has(.modal-overlay.active) .fab-add {
 
 .modal { max-height: 88vh; }
 
->>>>>>> 64fae0b19b212788390a7b5aa3a4aa5e1186e741
+/* Add-item image upload */
+.clothing-image-upload-area {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  min-height: 125px; padding: 18px; border: 1px dashed var(--border-medium);
+  border-radius: var(--radius-md); background: var(--bg-card); cursor: pointer; text-align: center;
+}
+.clothing-image-upload-area:hover, .clothing-image-upload-area:focus { border-color: var(--color-primary); outline: 2px solid transparent; }
+.clothing-image-upload-area svg { width: 28px; height: 28px; }
+.clothing-image-upload-area small { color: var(--color-beige-dark); }
+.clothing-image-preview-wrap { display: flex; align-items: center; gap: 14px; margin-top: 10px; flex-wrap: wrap; }
+.clothing-image-preview-wrap[hidden], .clothing-image-upload-area[hidden] { display: none !important; }
+.clothing-image-preview-wrap img { width: 110px; height: 110px; object-fit: contain; border: 1px solid var(--border-medium); border-radius: var(--radius-md); background: var(--bg-card); }
+.clothing-image-preview-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+#clothing-image-error { display: block; color: var(--color-error); margin-top: 6px; }
